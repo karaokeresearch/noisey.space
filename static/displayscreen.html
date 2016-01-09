@@ -60,6 +60,7 @@ meter::-webkit-meter-optimum-value {
 
 <script>
 var socket = io('/display');
+var danceScore=0;
 
 $( document ).ready(function() {
     console.log( "ready!" );
@@ -78,12 +79,17 @@ $( document ).ready(function() {
 }); //end document ready
 
 socket.on('clientUpdate', function(data) { //client dancability info
+	var gradient=0;
 	console.log(data);
+    if (data.danceScore<danceScore){ gradient=250}else{gradient=0}
+    
     $( "#meter1" ).animate({
         value: data.danceScore,
-      }, 225, function() {
+      }, gradient, function() {
         // Animation complete.
       });
+      
+      danceScore =data.danceScore;
     
 	
 	

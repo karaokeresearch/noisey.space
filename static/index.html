@@ -69,16 +69,14 @@
         $("#console").html(Math.abs(xyzMin[0] - xyzMax[0])    + "<br>" + Math.abs(xyzMin[1] - xyzMax[1])    + "<br>" + Math.abs(xyzMin[2] - xyzMax[2])    + "<br>" +  danceScore  + "<br>" +publishDate );        
         
         ticksSincePublish++;
-        if (ticksSincePublish>5){ //every quarter second
+        //console.log(ticksSincePublish);
+        if (ticksSincePublish>=5){ //every quarter second
      		socket.emit('danceStatus', {
     			buttonPushed: true,
     			danceScore: danceScore,
     			clientID: 1
 	    	});
-
-         
-         
-         ticksSincePublish=0;
+            ticksSincePublish=0;
         }
         
 	
