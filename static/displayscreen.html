@@ -1,0 +1,80 @@
+ <script type="text/javascript" src="jquery-2.1.4.js"></script>
+ <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+ 
+ <!DOCTYPE html>
+<html>
+
+
+<style>
+
+
+
+/*
+meter { -webkit-appearance: none; 
+    transform: rotate(90deg);
+    } //Crucial, this will disable the default styling in Webkit browsers
+
+meter::-webkit-meter-bar {
+    background: #FFF;
+    border: 1px solid #CCC;
+}
+
+meter::-webkit-meter-optimum-value {
+    background: #87C7DE;
+    background: -moz-linear-gradient(top, #a1d4e6 0%, #6bb4d1 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #a1d4e6), color-stop(100%, #6bb4d1));
+    background: -webkit-linear-gradient(top, #a1d4e6 0%, #6bb4d1 100%);
+    background: -o-linear-gradient(top, #a1d4e6 0%, #6bb4d1 100%);
+    background: -ms-linear-gradient(top, #a1d4e6 0%, #6bb4d1 100%);
+    background: linear-gradient(to bottom, #a1d4e6 0%, #6bb4d1 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#a1d4e6', endColorstr='#6bb4d1',GradientType=0);
+}
+*/
+
+
+
+
+ 
+ </style>
+
+
+
+
+<body>
+
+<p>Display a gauge:</p>
+<br><br>1 <meter id="meter1" value="0" min="0" max="10"></meter>
+<br><br>2 <meter id="meter2" value="0" min="0" max="10"></meter>
+<br><br>3 <meter id="meter3" value="0" min="0" max="10"></meter>
+<br><br>4 <meter id="meter4" value="0" min="0" max="10"></meter>
+<br><br>
+
+
+
+</body>
+
+
+
+
+</html>
+
+<script>
+
+var socket = io.connect();
+
+$( document ).ready(function() {
+    console.log( "ready!" );
+
+    setInterval(function(){
+        $( "#meter1" ).animate({
+            value: Math.random()*10,
+          }, 400, function() {
+            // Animation complete.
+          });
+        },500);
+    
+
+});
+
+
+</script>

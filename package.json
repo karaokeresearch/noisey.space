@@ -1,0 +1,39 @@
+{
+  "name": "noisey.space",
+  "preferGlobal": false,
+  "version": "1.0.0",
+  "description": "Turn multi-track recordings into an educational dancing game you can play with your friends!",
+  "contributors": [
+    {
+      "name": "Ross Brackett",
+      "email": "krc@brassrocket.com"
+    }
+  ],
+  "bin": {
+    "noisey": "noisey.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/karaokeresearch/noisey.space.git"
+  },
+  "dependencies": {
+    "express": "4.13.3",
+    "socket.io": "1.4.2",
+    "cookie-parser": "1.4.0"
+  },
+  "keywords": [
+    "stems",
+    "multitrack",
+    "dance",
+    "music",
+    "performance",
+    "live",
+    "live-band",
+    "instrument"
+  ],
+  "author": "Karaoke Research Council <krc@brassrocket.com>",
+  "license": "GPL-3.0"
+}

@@ -1,0 +1,92 @@
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+		<title>noisey.space</title>
+	</head>
+
+
+	<body bgcolor="#000000" style="padding: 0; margin: 0;">
+		<script type="text/javascript" src="gyro.js"></script>
+		<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+        <script type="text/javascript" src="jquery-2.1.4.js"></script>
+		
+<style>
+			
+</style>
+
+
+<div id=console style="color: white">console</div>
+
+
+		<script type="text/javascript">
+			var socket = io.connect();
+			var averageMotion=15;
+			var doingit=false;
+            var xyzArray=[];
+		    xyzArray[0]=[];
+            xyzArray[1]=[];    
+            xyzArray[2]=[];
+
+            var xyzMin=[];
+            var xyzMax=[];
+
+
+
+		$(document).ready(function () { //
+			console.log("ready");
+            gyro.frequency=50;
+        
+        gyro.startTracking(function(o) {
+            
+		combinedXYZ=(Math.abs(o.x) + Math.abs(o.y) + Math.abs(o.z));
+		if (combinedXYZ >15){averageMotion = (averageMotion+ combinedXYZ)/2} //built in "compressor" that makes the instrument less dynamic but works with a wider range of responses from gyro.js
+		loudness=(combinedXYZ/(averageMotion*1.5))-0.1;
+        if (combinedXYZ >1) {doingit=true}else{doingit=false}
+		//$("#console").html(combinedXYZ + "<br>" + averageMotion + "<br>" + loudness + "<br>" + doingit);
+        
+        xyzArray[0].push(o.x);
+        if (xyzArray[0].length>10){xyzArray[0].shift();}
+        xyzArray[1].push(o.y);
+        if (xyzArray[1].length>10){xyzArray[1].shift();}
+        xyzArray[2].push(o.z);       
+        if (xyzArray[2].length>10){xyzArray[2].shift();}
+        
+        for (var i=0; i<3; i++){
+            xyzMin[i]= xyzArray[i][0];
+            xyzMax[i]= xyzArray[i][0];
+            for (var j=1; j<xyzArray[i].length; j++) {
+                if (xyzArray[i][j]<xyzMin[i]) {xyzMin[i]=xyzArray[i][j]};
+                if (xyzArray[i][j]>xyzMax[i]) {xyzMax[i]=xyzArray[i][j]};
+            }
+        }
+
+        $("#console").html(Math.abs(xyzMin[0] - xyzMax[0])    + "<br>" + Math.abs(xyzMin[1] - xyzMax[1])    + "<br>" + Math.abs(xyzMin[2] - xyzMax[2])    + "<br>" +    (    Math.abs(xyzMin[0] - xyzMax[0]) +    Math.abs(xyzMin[1] - xyzMax[1])+   Math.abs(xyzMin[2] - xyzMax[2])         ) );        
+        
+        //$("#console").html(xyzArray[0]);
+        //$("#console").html(o.x.toFixed(2)+ "<br>" + o.y.toFixed(2) + "<br>" + o.z.toFixed(2) + "<br>" + (o.x + o.y + o.z)toFixed(2) );
+
+	
+    });
+
+
+
+
+
+
+
+
+
+
+
+            
+            
+            
+            
+
+
+		});
+
+
+		</script>
+	</body>
+</html>
