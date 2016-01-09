@@ -47,7 +47,17 @@ io.on('connection', function (socket) {
 //client:
 var client = io.of('/client');
 client.on('connection', function(socket){
-  console.log('A client connected!');
+  console.log('\n\nA client connected: ' + socket.id );
+  console.log("*********TOTAL CONNECTED TO /client******\n");
+
+  for (var id in io.of('/client').connected) {
+    var s = io.of('/client').connected[id].id;
+    console.log(s);
+}
+  
+  
+  
+  
   socket.on('danceStatus', function (data) { //incoming dance amount data
                //console.log(data);
                display.emit('clientUpdate', data);
