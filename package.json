@@ -9,8 +9,12 @@
       "email": "krc@brassrocket.com"
     }
   ],
+  "main": "noisey.js",
   "bin": {
     "noisey": "noisey.js"
+  },
+  "engines" : {
+    "node": "4.2.4"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

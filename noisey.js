@@ -17,7 +17,7 @@
 var express = require('express'),
     http = require('http'),
     app = express(),
-    server = http.createServer(app).listen(80),
+    server = http.createServer(app).listen(process.env.PORT||80),
     io = require('socket.io').listen(server, {
         log: false
     });
@@ -33,19 +33,48 @@ res.end("Hello World!")
 });
 
 //************** LISTENERS ********************
-io.sockets.on('connection', function (socket) {
-    // Welcome messages on connection to just the connecting client
-    socket.emit('value', {
-        message: "you are cool"
-    });
- 
 
-    socket.on('danceamount', function (data) { //user is switching lyrics.
-            console.log(data);
-        
+io.on('connection', function (socket) {
+    // Welcome messages on connection to just the connecting client
+    socket.emit('connected', {
+        message: "welcome"
     });
+    
+});
+
+//There's two channels, client and display. Display is the HTML display screen that also plays the songs
+
+//client:
+var client = io.of('/client');
+client.on('connection', function(socket){
+  console.log('A client connected!');
+  socket.on('danceStatus', function (data) { //incoming dance amount data
+               //console.log(data);
+               display.emit('clientUpdate', data);
+   });
 
 });
+
+
+
+//display:
+
+var display= io.of('/display');
+display.on('connection', function(socket){
+  console.log('A display connected!');
+
+
+});
+
+
+
+
+
+
+
+
+
+
 
 console.log("Running noisey.space");
 
