@@ -21,8 +21,14 @@
 
 <body bgcolor="#000000" style="padding: 0; margin: 0;">
 
-<div id="console" style="color: white;"><br><br></div>
-<div style="background-color:pink; height:50vw; width:50vw; touch-action: none;" id="thebutton">
+
+<div style="background-color:black; height:100%; width:100%; touch-action: none;" id="wholepage">
+
+<div style="position: absolute; right: 25vw; top: 25vw; background-color:grey; height:50vw; width:50vw;" id="thebutton">
+</div>
+</div>
+</body>
+
 
 	<script type="text/javascript">
 		var socket = io('/client');
@@ -45,7 +51,7 @@
         var ticksSincePublish=0;
         var deviceID;
         var buttonPushed=false;
-        
+        var justFullScreened=false;        
 
 
 
@@ -54,55 +60,35 @@
 
 $(document).ready(function () { //
 
-$('#thebutton').bind('touchstart', function(e){
+$('#wholepage').bind('touchstart', function(e){
     buttonPushed=true;
     sendDanceStatus();    
-    $("#thebutton").css("background-color", "red");
+    $("#thebutton").css("background-color", "white");
+
+   if (justFullScreened===true){ //the second time you push the button it locks orientation in case you didn't get it the first time.
+        lockOrientation();
+        justFullScreened=false;
+        console.log("locking orientation a second time in case it got missed the first time");
+    }
+
+   if (!(document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen)){
+        fullscreen();
+        justFullScreened=true;
+        setTimeout(function(){
+            lockOrientation();
+        },1); //you've got to be kidding me. This fixes Firefox orientation lock #oratleastitusedto #haxx #findabetterway
+        console.log ("fullscreening and attempting to lock orientation")
+   }
+ 
 })                                      
 
-$('#thebutton').bind('touchend', function(e){
+$('#wholepage').bind('touchend', function(e){
     buttonPushed=false;
     sendDanceStatus();    
-    $("#thebutton").css("background-color", "pink");
+    $("#thebutton").css("background-color", "grey");
 })                                      
 
 
-
-
-//// get a reference to an element
-//var thebutton = document.getElementById('thebutton');
-//
-//// create a manager for that element
-//var mc = new Hammer.Manager(thebutton);
-//
-//// create a recognizer
-//var press = new Hammer.Press({time:1});
-//var pan = new Hammer.Pan();
-//var tap = new Hammer.Tap();
-//
-//// add the recognizer
-//mc.add(press);
-//mc.add(pan);
-//mc.add(tap);
-//
-//
-//mc.on('press tap', function(e) { //finger down
-//    // do something cool
-//    console.log("pushed");
-//    $("#thebutton").css("background-color", "red");
-//    buttonPushed=true;
-//    sendDanceStatus();
-//});
-//
-//
-//mc.on('pressup pancancel panend', function(e) { //finger up
-//    // do something cool
-//    console.log("released");
-//$("#thebutton").css("background-color", "pink");
-//    buttonPushed=false;
-//    sendDanceStatus();
-//});
-//
 
 
     if (!Cookies('deviceID')){
@@ -123,13 +109,7 @@ $('#thebutton').bind('touchend', function(e){
         gyro.startTracking(function(o) {
 
 
-            //combinedXYZ=(Math.abs(o.x) + Math.abs(o.y) + Math.abs(o.z));
-            //if (combinedXYZ >15){averageMotion = (averageMotion+ combinedXYZ)/2} //built in "compressor" that makes the instrument less dynamic but works with a wider range of responses from gyro.js
-            //loudness=(combinedXYZ/(averageMotion*1.5))-0.1;
-            //if (combinedXYZ >1) {doingit=true}else{doingit=false}
-
-            //$("#console").html(combinedXYZ + "<br>" + averageMotion + "<br>" + loudness + "<br>" + doingit);
-
+            
             xyzArray[0].push(o.x);
             if (xyzArray[0].length>20){xyzArray[0].shift();}
             xyzArray[1].push(o.y);
@@ -166,6 +146,14 @@ $('#thebutton').bind('touchend', function(e){
 
 
 
+
+socket.on('command', function(data) { //incoming server instructions
+          console.log("command:");
+          console.log(data.command, data.parameter);
+});
+
+
+
 socket.on('authRequest', function(data) { //failsafe in case authorization fails or server is restarted. Server can request your stored cookie deviceID
           sendDeviceID();
 });
@@ -190,6 +178,32 @@ var sendDeviceID = function(){
 
 
 
+var lockOrientation= function() {
+    if (typeof screen.orientation !== "undefined" && screen.orientation.lock !== "undefined" ){
+        screen.orientation.lock('portrait-primary');
+    } else if(window.screen.lockOrientation){
+        window.screen.lockOrientation('portrait-primary');
+    } else if(window.screen.mozLockOrientation){
+        window.screen.mozLockOrientation('portrait-primary');
+    } else if (window.screen.msLockOrientation){
+        window.screen.msLockOrientation('portrait-primary');
+    }
+};
+
+
+var fullscreen = function(callback) {
+    if(document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen();
+    } else if(document.documentElement.webkitRequestFullscreen) {
+        document.documentElement.webkitRequestFullscreen();
+    } else if(document.documentElement.mozRequestFullScreen) {
+        document.documentElement.mozRequestFullScreen();
+    } else if(document.documentElement.msRequestFullscreen) {
+        document.documentElement.msRequestFullscreen();
+    }
+};
+
+
+
 		</script>
-	</body>
 </html>

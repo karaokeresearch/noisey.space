@@ -74,19 +74,19 @@ client.on('connection', function(socket){
   
   socket.on('danceStatus', function (data) { //incoming dance amount data
                 if (socket.deviceID){ //we have a deviceID associated with this device
-                   //data.deviceID=socket.deviceID;
-                   //console.log(slot, socket.deviceID);
-                   
-                   for (var i=0; i<4; i++){ //is this a slotted client?
-                       if (slot[i] && slot[i].deviceID===socket.deviceID){
+                   for (var i=0; i<4; i++){ //let's run through the clients
+                       if (slot[i] && slot[i].deviceID===socket.deviceID){ //is this a slotted client?
                             //console.log("match", socket.deviceID, i);
                             data.slot=i;
                             display.emit('clientUpdate', data);
-                            //console.log("slot: " , slot);
+  
+                              if (data.danceScore >10 || data.buttonPushed===true){ //every time the user is not violating the rules, reset their lease
+                                  slot[i].lastGoodDance=Date.now();
+                              }                                                    
                         };
                     }       
                   
-                }else{
+                }else{ //no deviceID associated.
                  console.log('sending auth request');
                  socket.emit('authRequest')
                 }
@@ -118,6 +118,22 @@ display.on('connection', function(socket){
 
 });
 
+var emitCommandByDeviceID = function(targetDeviceID,commandToSend,parameter){
+    //console.log("trying to emit to", targetDeviceID);
+    for (var id in io.of('/client').connected) { //let's look at each connected client 
+        var deviceID = io.of('/client').connected[id].deviceID;
+        //console.log("looking at", deviceID);        
+        if (targetDeviceID === deviceID){
+            console.log ("EMITTING: ", commandToSend, parameter);
+            io.of('client').connected[id].emit('command', {'command':commandToSend,
+                                                           'parameter':parameter
+                                                            });
+            
+        }
+    }    
+   
+}
+
 
 
 var allocateSlots = function(){
@@ -135,43 +151,38 @@ var allocateSlots = function(){
             if (!slot[i]){
                 slot[i]={};
                 slot[i].deviceID=deviceID;
+                slot[i].lastGoodDance=Date.now();
+                emitCommandByDeviceID(deviceID, "console", "you were added to slot " + i);
                 break;
             }
         }
     }
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   }  
   
 console.log("slot:");
 console.log(slot);
-//
-
-
-
-
-
-
 
 };
 
 
+
+setInterval(function(){
+    for (var i=0; i<4; i++){ //is this a slotted client?
+    if (slot[i]){
+            if (Date.now() - slot[i].lastGoodDance >15000){
+                console.log("more than 15 seconds since good send on slot", i);
+                console.log("deleting.");
+                emitCommandByDeviceID(slot[i].deviceID, "console", "disconnected!" + i);
+                delete slot[i];
+                allocateSlots();
+            } else{console.log(  (15-(Date.now() - slot[i].lastGoodDance)/1000).toFixed(0) + " seconds left on slot " + i );}
+        }       
+    }      
+//
+//
+//
     
-
-
-
-
+},1000);
 
 
 
