@@ -43,10 +43,10 @@ meter::-webkit-meter-optimum-value {
 <body>
 
 <p>Display a gauge:</p>
-<br><br>1 <meter id="meter1" value="0" min="0" max="50"></meter>
-<br><br>2 <meter id="meter2" value="0" min="0" max="50"></meter>
-<br><br>3 <meter id="meter3" value="0" min="0" max="50"></meter>
-<br><br>4 <meter id="meter4" value="0" min="0" max="50"></meter>
+<br><br>1 <meter id="meter0" value="0" min="0" max="50"></meter> <span id="button0">B</span>
+<br><br>2 <meter id="meter1" value="0" min="0" max="50"></meter> <span id="button1">B</span>
+<br><br>3 <meter id="meter2" value="0" min="0" max="50"></meter> <span id="button2">B</span>
+<br><br>4 <meter id="meter3" value="0" min="0" max="50"></meter> <span id="button3">B</span>
 <br><br>
 
 
@@ -81,9 +81,14 @@ $( document ).ready(function() {
 socket.on('clientUpdate', function(data) { //client dancability info
 	var gradient=0;
 	console.log(data);
+    if (data.buttonPushed){
+        $( "#button"+data.slot).css("background-color", "red");
+    }else{
+        $( "#button"+data.slot).css("background-color", "pink");
+    }
     if (data.danceScore<danceScore){ gradient=250}else{gradient=0}
     
-    $( "#meter1" ).animate({
+    $( "#meter"+data.slot).animate({
         value: data.danceScore,
       }, gradient, function() {
         // Animation complete.

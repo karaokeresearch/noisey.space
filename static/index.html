@@ -5,21 +5,31 @@
 	</head>
 
 
-	<body bgcolor="#000000" style="padding: 0; margin: 0;">
+	
 		<script type="text/javascript" src="gyro.js"></script>
 		<script type="text/javascript" src="/socket.io/socket.io.js"></script>
         <script type="text/javascript" src="jquery-2.1.4.js"></script>
-		
+        <script type="text/javascript" src="cookies.js"></script>		
+        <script type="text/javascript" src="hammer-time.js"></script>	
+        
+        
 <style>
 			
 </style>
 
 
-<div id=console style="color: white">console</div>
 
+<body bgcolor="#000000" style="padding: 0; margin: 0;">
+
+<div id="console" style="color: white;"><br><br></div>
+<div style="background-color:pink; height:50vw; width:50vw; touch-action: none;" id="thebutton">
 
 	<script type="text/javascript">
 		var socket = io('/client');
+		
+		
+		
+		
 		var averageMotion=15;
 		var doingit=false;
         var xyzArray=[];
@@ -33,72 +43,151 @@
         var xyzMin=[];
         var xyzMax=[];
         var ticksSincePublish=0;
-
-
-		$(document).ready(function () { //
-			console.log("ready");
-            gyro.frequency=50;
+        var deviceID;
+        var buttonPushed=false;
         
+
+
+
+
+
+
+$(document).ready(function () { //
+
+$('#thebutton').bind('touchstart', function(e){
+    buttonPushed=true;
+    sendDanceStatus();    
+    $("#thebutton").css("background-color", "red");
+})                                      
+
+$('#thebutton').bind('touchend', function(e){
+    buttonPushed=false;
+    sendDanceStatus();    
+    $("#thebutton").css("background-color", "pink");
+})                                      
+
+
+
+
+//// get a reference to an element
+//var thebutton = document.getElementById('thebutton');
+//
+//// create a manager for that element
+//var mc = new Hammer.Manager(thebutton);
+//
+//// create a recognizer
+//var press = new Hammer.Press({time:1});
+//var pan = new Hammer.Pan();
+//var tap = new Hammer.Tap();
+//
+//// add the recognizer
+//mc.add(press);
+//mc.add(pan);
+//mc.add(tap);
+//
+//
+//mc.on('press tap', function(e) { //finger down
+//    // do something cool
+//    console.log("pushed");
+//    $("#thebutton").css("background-color", "red");
+//    buttonPushed=true;
+//    sendDanceStatus();
+//});
+//
+//
+//mc.on('pressup pancancel panend', function(e) { //finger up
+//    // do something cool
+//    console.log("released");
+//$("#thebutton").css("background-color", "pink");
+//    buttonPushed=false;
+//    sendDanceStatus();
+//});
+//
+
+
+    if (!Cookies('deviceID')){
+        deviceID = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {              //generate a UUID to be used as a session ID
+            var r = crypto.getRandomValues(new Uint8Array(1))[0]%16|0, v = c == 'x' ? r : (r&0x3|0x8);
+            return v.toString(16);
+        });
+        Cookies.set('deviceID', deviceID, { expires: '01/01/2030' })
+    } else{deviceID=Cookies('deviceID')}
+
+
+        sendDeviceID();
+        console.log("ready");
+        gyro.frequency=50;
+
+
+
         gyro.startTracking(function(o) {
-        
-            
-		//combinedXYZ=(Math.abs(o.x) + Math.abs(o.y) + Math.abs(o.z));
-		//if (combinedXYZ >15){averageMotion = (averageMotion+ combinedXYZ)/2} //built in "compressor" that makes the instrument less dynamic but works with a wider range of responses from gyro.js
-		//loudness=(combinedXYZ/(averageMotion*1.5))-0.1;
-        //if (combinedXYZ >1) {doingit=true}else{doingit=false}
-		
-		//$("#console").html(combinedXYZ + "<br>" + averageMotion + "<br>" + loudness + "<br>" + doingit);
-        
-        xyzArray[0].push(o.x);
-        if (xyzArray[0].length>20){xyzArray[0].shift();}
-        xyzArray[1].push(o.y);
-        if (xyzArray[1].length>20){xyzArray[1].shift();}
-        xyzArray[2].push(o.z);       
-        if (xyzArray[2].length>20){xyzArray[2].shift();}
-        
-        for (var i=0; i<3; i++){
-            xyzMin[i]= xyzArray[i][0];
-            xyzMax[i]= xyzArray[i][0];
-            for (var j=1; j<xyzArray[i].length; j++) {
-                if (xyzArray[i][j]<xyzMin[i]) {xyzMin[i]=xyzArray[i][j]};
-                if (xyzArray[i][j]>xyzMax[i]) {xyzMax[i]=xyzArray[i][j]};
+
+
+            //combinedXYZ=(Math.abs(o.x) + Math.abs(o.y) + Math.abs(o.z));
+            //if (combinedXYZ >15){averageMotion = (averageMotion+ combinedXYZ)/2} //built in "compressor" that makes the instrument less dynamic but works with a wider range of responses from gyro.js
+            //loudness=(combinedXYZ/(averageMotion*1.5))-0.1;
+            //if (combinedXYZ >1) {doingit=true}else{doingit=false}
+
+            //$("#console").html(combinedXYZ + "<br>" + averageMotion + "<br>" + loudness + "<br>" + doingit);
+
+            xyzArray[0].push(o.x);
+            if (xyzArray[0].length>20){xyzArray[0].shift();}
+            xyzArray[1].push(o.y);
+            if (xyzArray[1].length>20){xyzArray[1].shift();}
+            xyzArray[2].push(o.z);
+            if (xyzArray[2].length>20){xyzArray[2].shift();}
+
+            for (var i=0; i<3; i++){
+                xyzMin[i]= xyzArray[i][0];
+                xyzMax[i]= xyzArray[i][0];
+                for (var j=1; j<xyzArray[i].length; j++) {
+                    if (xyzArray[i][j]<xyzMin[i]) {xyzMin[i]=xyzArray[i][j]};
+                    if (xyzArray[i][j]>xyzMax[i]) {xyzMax[i]=xyzArray[i][j]};
+                }
             }
-        }
 
-        danceScore = ( Math.abs(xyzMin[0] - xyzMax[0]) +    Math.abs(xyzMin[1] - xyzMax[1])+   Math.abs(xyzMin[2] - xyzMax[2]));
-        $("#console").html(Math.abs(xyzMin[0] - xyzMax[0])    + "<br>" + Math.abs(xyzMin[1] - xyzMax[1])    + "<br>" + Math.abs(xyzMin[2] - xyzMax[2])    + "<br>" +  danceScore  + "<br>" +publishDate );        
-        
-        ticksSincePublish++;
-        //console.log(ticksSincePublish);
-        if (ticksSincePublish>=5){ //every quarter second
-     		socket.emit('danceStatus', {
-    			buttonPushed: true,
-    			danceScore: danceScore,
-    			clientID: 1
-	    	});
-            ticksSincePublish=0;
-        }
-        
-	
+            danceScore = ( Math.abs(xyzMin[0] - xyzMax[0]) +    Math.abs(xyzMin[1] - xyzMax[1])+   Math.abs(xyzMin[2] - xyzMax[2]));
+            //$("#console").html(Math.abs(xyzMin[0] - xyzMax[0])    + "<br>" + Math.abs(xyzMin[1] - xyzMax[1])    + "<br>" + Math.abs(xyzMin[2] - xyzMax[2])    + "<br>" +  danceScore  + "<br>" +publishDate );
+
+            ticksSincePublish++;
+            //console.log(ticksSincePublish);
+            if (ticksSincePublish>=5){ //every quarter second
+                sendDanceStatus();
+                ticksSincePublish=0;
+            }
+
+
+        });
+
+
+
+
+}); //end document ready
+
+
+
+socket.on('authRequest', function(data) { //failsafe in case authorization fails or server is restarted. Server can request your stored cookie deviceID
+          sendDeviceID();
+});
+
+var sendDanceStatus = function(){
+    socket.emit('danceStatus', {
+        buttonPushed: buttonPushed,
+        danceScore: Math.round(danceScore*100)/100, //two digit hack
     });
+};
+
+var sendDeviceID = function(){
+    if(deviceID){
+      socket.emit('register', {
+                deviceID: deviceID
+      });
+     }
+};           
 
 
 
 
-
-
-
-
-
-
-
-            
-            
-            
-            
-
-
-		});
 
 
 		</script>
