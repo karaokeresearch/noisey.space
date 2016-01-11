@@ -215,7 +215,9 @@ setInterval(function(){  //queue that runs every second to check on user activit
                     allocateSlots();
                     emitCommandByDeviceID(devid, "disconnected", true);
                 } else{
-                    emitCommandByDeviceID(slot[i].deviceID, "secondsLeft", (15-(Date.now() - slot[i].lastGoodDance)/1000).toFixed(0));
+                    var secondsLeft=(15-(Date.now() - slot[i].lastGoodDance)/1000).toFixed(0);
+                    
+                    if (secondsLeft<15){emitCommandByDeviceID(slot[i].deviceID, "secondsLeft", secondsLeft );}
                 }
        }       
    }      

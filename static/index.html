@@ -27,7 +27,7 @@
 
     <div style="position: absolute; right: 25vw; top: 25vw; background-color:grey; height:50vw; width:50vw;" id="thebutton">
     </div>
-    <div style="position: absolute; right: 0px; top: 100vw; background-color:black; color: white; font-family:Sans; height:50vw; width:100vw;" id="console">CONSOLE
+    <div style="position: absolute; right: 0px; top: 100vw; background-color:black; color: white; font-family:Sans; height:50vw; width:100vw;" id="console">
     </div>                                                                                                                                   
 
     
@@ -70,6 +70,7 @@ $('#wholepage').bind('touchstart', function(e){
     buttonPushed=true;
     sendDanceStatus();    
     $("#thebutton").css("background-color", "white");
+    $("#console").html("NOW DANCE!");
 
    if (justFullScreened===true){ //the second time you push the button it locks orientation in case you didn't get it the first time.
         lockOrientation();
@@ -158,7 +159,8 @@ socket.on('command', function(data) { //incoming server instructions
           console.log("command:");
           console.log(data.command, data.parameter);
           if (data.command==="disconnected"){
-            $("#console").html("DISCONNECTED");
+            $("#console").html("WAITING YOUR TURN...");
+            $("#slot").html('');
             sendDeviceID();
             assignedSlot=-1;
             }
@@ -169,7 +171,8 @@ socket.on('command', function(data) { //incoming server instructions
             }
 
           if (data.command==="secondsLeft"){
-            $("#console").html("START DANCING OR PUSH THE BUTTON OR SESSION WILL DISCONNECT IN " + data.parameter + " SECONDS");
+            $("#console").html("START DANCING OR PUSH THE BUTTON!<BR>HURRY! " + data.parameter + " SECONDS LEFT!");
+            //navigator.vibrate(100); //add back in before production
             assignedSlot=data.parameter;
             }
 
@@ -190,6 +193,9 @@ var sendDanceStatus = function(){
         buttonPushed: buttonPushed,
         danceScore: Math.round(danceScore*100)/100, //two digit hack
     });
+    
+    if (danceScore>10 && buttonPushed===true){$("#console").html("YEAH!!!! KEEP DANCING!!!!");}
+    
 };
 
 var sendDeviceID = function(){
