@@ -26,6 +26,7 @@ app.use(express.static(__dirname + '/static')); //Where the static files are loa
 
 
 var slot=[]; //four slots for each channel
+var placeInLine=[];
 
 
 
@@ -36,16 +37,6 @@ var slot=[]; //four slots for each channel
 
 
 
-
-
-//app.use('/audio', express.static(audioDirectory)); //Where the static files are loaded from
-
-//************** URL handlers ********************
-
-app.get('/helloworld', function (req, res) { //Meat of the HTML data that defines a page.  Loaded into the <BODY> area </BODY>
-res.set('Cache-Control', 'private, no-cache, no-store, must-revalidate'); //IE11 gets confused otherwise
-res.end("Hello World!")
-});
 
 //************** LISTENERS ********************
 
@@ -63,13 +54,15 @@ io.on('connection', function (socket) {
 var client = io.of('/client');
 client.on('connection', function(socket){
   console.log('\n\nA client connected: ' + socket.id );
-
-  console.log("*********TOTAL CONNECTED TO /client******\n");
+//  console.log("*********TOTAL CONNECTED TO /client******\n");
+  
   for (var id in io.of('/client').connected) {
     var s = io.of('/client').connected[id].id;
     //console.log(s);
-}
-  
+  }
+    console.log('sending auth request');
+    socket.emit('authRequest')
+ 
   
   
   socket.on('danceStatus', function (data) { //incoming dance amount data
@@ -87,8 +80,7 @@ client.on('connection', function(socket){
                     }       
                   
                 }else{ //no deviceID associated.
-                 console.log('sending auth request');
-                 socket.emit('authRequest')
+
                 }
                     
                     
@@ -96,11 +88,18 @@ client.on('connection', function(socket){
 
    });
 
-  socket.on('register', function (data) { //incoming dance amount data
-  socket.deviceID = data.deviceID;
-  console.log(data.deviceID + " registered");
-  allocateSlots();
-     
+  socket.on('register', function (data) { //incoming registration info
+      socket.deviceID = data.deviceID;
+      console.log(data.deviceID + " registered");
+      
+      if (placeInLine.indexOf(data.deviceID)===-1){placeInLine.push(data.deviceID);}
+      
+                  console.log("cccccccccccccccc added");
+                  console.log(placeInLine);
+                  console.log("cccccccccccccccc");
+
+      allocateSlots();
+         
                
    });
 
@@ -137,9 +136,20 @@ var emitCommandByDeviceID = function(targetDeviceID,commandToSend,parameter){
 
 
 var allocateSlots = function(){
+//    for (dID in placeInLine) { //let's look at each client on the list. These are device IDs
+//        for (var sid in io.of('/client').connected) { //session IDs 
+//            var deviceID = io.of('/client').connected[sid].deviceID;
+//            var alreadyAdded=false;
+//            if (deviceID ===did){//device still is attached. 
+//                for (var i=0; i<4; i++){//look through the slot array and see if the entry is already there
+//                   if (slot[i] && slot[i].deviceID===deviceID){alreadyAdded=true};
+//    }
+//
+//  }
+//
 
   for (var id in io.of('/client').connected) { //let's look at each connected client 
-    //console.log("id:" + id);
+  //  console.log("id:" + id);
     var deviceID = io.of('/client').connected[id].deviceID;
     var alreadyAdded=false;
     
@@ -147,41 +157,64 @@ var allocateSlots = function(){
         if (slot[i] && slot[i].deviceID===deviceID){alreadyAdded=true};
     }
     if (!alreadyAdded && deviceID) {  //if not, add it!... but only if deviceID is defined.
+        var ableToAdd=false;
         for (var i=0; i<4; i++){
             if (!slot[i]){
                 slot[i]={};
                 slot[i].deviceID=deviceID;
                 slot[i].lastGoodDance=Date.now();
-                emitCommandByDeviceID(deviceID, "console", "you were added to slot " + i);
+                
+                emitCommandByDeviceID(deviceID, "console", "you're added to slot " + i + ", " +deviceID);
+                ableToAdd=true;
                 break;
             }
         }
+        if (ableToAdd===false){emitCommandByDeviceID(deviceID, "console", "all slots full");}
     }
   }  
   
-console.log("slot:");
-console.log(slot);
+//console.log("slot:");
+//console.log(slot);
 
 };
 
 
 
-setInterval(function(){
+setInterval(function(){  //queue that runs every second to check on user activity,.
+                    //console.log("------");
+                    //console.log(placeInLine);
+                    //console.log("------");
+
     for (var i=0; i<4; i++){ //is this a slotted client?
-    if (slot[i]){
-            if (Date.now() - slot[i].lastGoodDance >15000){
-                console.log("more than 15 seconds since good send on slot", i);
-                console.log("deleting.");
-                emitCommandByDeviceID(slot[i].deviceID, "console", "disconnected!" + i);
-                delete slot[i];
-                allocateSlots();
-            } else{console.log(  (15-(Date.now() - slot[i].lastGoodDance)/1000).toFixed(0) + " seconds left on slot " + i );}
-        }       
-    }      
+        if (slot[i]){
+                if (Date.now() - slot[i].lastGoodDance >5000){ //timeout
+                    console.log("more than 5 seconds since good user activity on slot", i);
+                    console.log("deleting.");
+                    var devid = slot[i].deviceID;
+
+                  console.log("aaaaaaaaaaaaaaaa before");
+                  console.log(placeInLine);
+                  console.log("aaaaaaaaaaaaaaaa");
+
+                    while(placeInLine.indexOf(slot[i].deviceID)!==-1){placeInLine.splice(placeInLine.indexOf(slot[i].deviceID),1)} //clean out any and all entries in the queue of the offender
+
+                  console.log("bbbbbbbbbbbbbbbb after");
+                  console.log(placeInLine);
+                  console.log("bbbbbbbbbbbbbbbb ");
+   
+      
+                    console.log("*******************************splicing", devid);
+                    delete slot[i];
+                    allocateSlots();
+                    emitCommandByDeviceID(devid, "disconnected", true);
+                } else{//console.log(  (5-(Date.now() - slot[i].lastGoodDance)/1000).toFixed(0) + " seconds left on slot " + i );
+                }
+       }       
+   }      
 //
 //
 //
-    
+      
 },1000);
 
 

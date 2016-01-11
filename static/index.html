@@ -61,6 +61,7 @@
 $(document).ready(function () { //
 
 $('#wholepage').bind('touchstart', function(e){
+    
     buttonPushed=true;
     sendDanceStatus();    
     $("#thebutton").css("background-color", "white");
@@ -79,13 +80,14 @@ $('#wholepage').bind('touchstart', function(e){
         },1); //you've got to be kidding me. This fixes Firefox orientation lock #oratleastitusedto #haxx #findabetterway
         console.log ("fullscreening and attempting to lock orientation")
    }
- 
+ navigator.vibrate(100);
 })                                      
 
 $('#wholepage').bind('touchend', function(e){
     buttonPushed=false;
     sendDanceStatus();    
     $("#thebutton").css("background-color", "grey");
+    navigator.vibrate(100);
 })                                      
 
 
@@ -150,6 +152,8 @@ $('#wholepage').bind('touchend', function(e){
 socket.on('command', function(data) { //incoming server instructions
           console.log("command:");
           console.log(data.command, data.parameter);
+          if (data.command==="disconnected"){sendDeviceID()}
+          
 });
 
 
@@ -166,6 +170,7 @@ var sendDanceStatus = function(){
 };
 
 var sendDeviceID = function(){
+    console.log("registering", deviceID);
     if(deviceID){
       socket.emit('register', {
                 deviceID: deviceID
