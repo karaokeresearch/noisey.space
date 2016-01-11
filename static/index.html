@@ -22,6 +22,7 @@
 <body bgcolor="#000000" style="padding: 0; margin: 0;">
 
 
+    <div style="position: absolute; left: 0px; top: 0px; background-color:#222222; color: white; font-family:Sans; font-size:6vw; height:10vw; width:10vw;" id="slot"></div>
 <div style="background-color:black; height:100%; width:100%; touch-action: none;" id="wholepage">
 
     <div style="position: absolute; right: 25vw; top: 25vw; background-color:grey; height:50vw; width:50vw;" id="thebutton">
@@ -163,9 +164,16 @@ socket.on('command', function(data) { //incoming server instructions
             }
 
           if (data.command==="assignSlot"){
-            $("#console").html("SLOT " + data.parameter);
+            $("#slot").html(data.parameter);
             assignedSlot=data.parameter;
             }
+
+          if (data.command==="secondsLeft"){
+            $("#console").html("START DANCING OR PUSH THE BUTTON OR SESSION WILL DISCONNECT IN " + data.parameter + " SECONDS");
+            assignedSlot=data.parameter;
+            }
+
+
           
 
           

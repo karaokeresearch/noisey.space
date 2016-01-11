@@ -94,9 +94,9 @@ client.on('connection', function(socket){
       
       if (placeInLine.indexOf(data.deviceID)===-1){placeInLine.push(data.deviceID);} //only add it if it's not already there
       
-                  console.log("cccccccccccccccc added");
-                  console.log(placeInLine);
-                  console.log("cccccccccccccccc");
+                  //console.log("cccccccccccccccc added");
+                  //console.log(placeInLine);
+                  //console.log("cccccccccccccccc");
 
       allocateSlots();
          
@@ -118,12 +118,12 @@ display.on('connection', function(socket){
 });
 
 var emitCommandByDeviceID = function(targetDeviceID,commandToSend,parameter){
-    //console.log("trying to emit to", targetDeviceID);
+    if (targetDeviceID==="bab34b4c-7a81-4f17-942e-33a4733de963" && commandToSend==="assignSlot"){ console.log("trying to emit:",targetDeviceID,commandToSend,parameter)};
     for (var id in io.of('/client').connected) { //let's look at each connected client 
         var deviceID = io.of('/client').connected[id].deviceID;
         //console.log("looking at", deviceID);        
         if (targetDeviceID === deviceID){
-            console.log ("EMITTING: ", commandToSend, parameter);
+            //console.log ("EMITTING: ", commandToSend, parameter);
             io.of('client').connected[id].emit('command', {'command':commandToSend,
                                                            'parameter':parameter
                                                             });
@@ -157,8 +157,12 @@ var allocateSlots = function(){
     var alreadyAdded=false;
     
     for (var i=0; i<4; i++){//look through the slot array and see if the entry is already there
-        if (slot[i] && slot[i].deviceID===deviceID){alreadyAdded=true};
+        if (slot[i] && slot[i].deviceID===deviceID){
+            alreadyAdded=true;
+            emitCommandByDeviceID(deviceID, "assignSlot", i);
+            };
     }
+    
     if (!alreadyAdded && deviceID) {  //if not, add it!... but only if deviceID is defined 
         var ableToAdd=false;
         for (var i=0; i<4; i++){
@@ -166,7 +170,7 @@ var allocateSlots = function(){
                 slot[i]={};
                 slot[i].deviceID=deviceID;
                 slot[i].lastGoodDance=Date.now();
-                
+                console.log("ASSIGNING " + deviceID, i);
                 emitCommandByDeviceID(deviceID, "assignSlot", i);
                 ableToAdd=true;
                 break;
@@ -190,27 +194,28 @@ setInterval(function(){  //queue that runs every second to check on user activit
 
     for (var i=0; i<4; i++){ //is this a slotted client?
         if (slot[i]){
-                if (Date.now() - slot[i].lastGoodDance >5000){ //timeout
-                    console.log("more than 5 seconds since good user activity on slot", i);
+                if (Date.now() - slot[i].lastGoodDance >15000){ //timeout
+                    console.log("more than 15 seconds since good user activity on slot", i);
                     console.log("deleting.");
                     var devid = slot[i].deviceID;
 
-                  console.log("aaaaaaaaaaaaaaaa before");
-                  console.log(placeInLine);
-                  console.log("aaaaaaaaaaaaaaaa");
+                  //console.log("aaaaaaaaaaaaaaaa before");
+                  //console.log(placeInLine);
+                  //console.log("aaaaaaaaaaaaaaaa");
 
                     while(placeInLine.indexOf(slot[i].deviceID)!==-1){placeInLine.splice(placeInLine.indexOf(slot[i].deviceID),1)} //clean out any and all entries in the queue of the offender
 
-                  console.log("bbbbbbbbbbbbbbbb after");
-                  console.log(placeInLine);
-                  console.log("bbbbbbbbbbbbbbbb ");
+                  //console.log("bbbbbbbbbbbbbbbb after");
+                  //console.log(placeInLine);
+                  //console.log("bbbbbbbbbbbbbbbb ");
    
       
                     console.log("*******************************splicing", devid);
                     delete slot[i];
                     allocateSlots();
                     emitCommandByDeviceID(devid, "disconnected", true);
-                } else{//console.log(  (5-(Date.now() - slot[i].lastGoodDance)/1000).toFixed(0) + " seconds left on slot " + i );
+                } else{
+                    emitCommandByDeviceID(slot[i].deviceID, "secondsLeft", (15-(Date.now() - slot[i].lastGoodDance)/1000).toFixed(0));
                 }
        }       
    }      
