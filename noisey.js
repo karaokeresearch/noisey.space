@@ -92,7 +92,7 @@ client.on('connection', function(socket){
       socket.deviceID = data.deviceID;
       console.log(data.deviceID + " registered");
       
-      if (placeInLine.indexOf(data.deviceID)===-1){placeInLine.push(data.deviceID);}
+      if (placeInLine.indexOf(data.deviceID)===-1){placeInLine.push(data.deviceID);} //only add it if it's not already there
       
                   console.log("cccccccccccccccc added");
                   console.log(placeInLine);
@@ -148,15 +148,18 @@ var allocateSlots = function(){
 //  }
 //
 
-  for (var id in io.of('/client').connected) { //let's look at each connected client 
+  //for (var id in io.of('/client').connected) { //let's look at each connected client 
   //  console.log("id:" + id);
-    var deviceID = io.of('/client').connected[id].deviceID;
+    //var deviceID = io.of('/client').connected[id].deviceID;
+ for (w in placeInLine){
+    deviceID=placeInLine[w];
+    //console.log("we found ", deviceID);
     var alreadyAdded=false;
     
     for (var i=0; i<4; i++){//look through the slot array and see if the entry is already there
         if (slot[i] && slot[i].deviceID===deviceID){alreadyAdded=true};
     }
-    if (!alreadyAdded && deviceID) {  //if not, add it!... but only if deviceID is defined.
+    if (!alreadyAdded && deviceID) {  //if not, add it!... but only if deviceID is defined 
         var ableToAdd=false;
         for (var i=0; i<4; i++){
             if (!slot[i]){

@@ -24,8 +24,12 @@
 
 <div style="background-color:black; height:100%; width:100%; touch-action: none;" id="wholepage">
 
-<div style="position: absolute; right: 25vw; top: 25vw; background-color:grey; height:50vw; width:50vw;" id="thebutton">
-</div>
+    <div style="position: absolute; right: 25vw; top: 25vw; background-color:grey; height:50vw; width:50vw;" id="thebutton">
+    </div>
+    <div style="position: absolute; right: 0px; top: 100vw; background-color:black; color: white; font-family:Sans; height:50vw; width:100vw;" id="console">CONSOLE
+    </div>                                                                                                                                   
+
+    
 </div>
 </body>
 
@@ -152,7 +156,10 @@ $('#wholepage').bind('touchend', function(e){
 socket.on('command', function(data) { //incoming server instructions
           console.log("command:");
           console.log(data.command, data.parameter);
-          if (data.command==="disconnected"){sendDeviceID()}
+          if (data.command==="disconnected"){
+            $("#console").html("DISCONNECTED");
+            sendDeviceID()
+            }
           
 });
 

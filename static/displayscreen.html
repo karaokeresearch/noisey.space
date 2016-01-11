@@ -80,7 +80,7 @@ $( document ).ready(function() {
 
 socket.on('clientUpdate', function(data) { //client dancability info
 	var gradient=0;
-	console.log(data);
+	//console.log(data);
     if (data.buttonPushed){
         $( "#button"+data.slot).css("background-color", "red");
     }else{
