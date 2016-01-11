@@ -167,7 +167,7 @@ var allocateSlots = function(){
                 slot[i].deviceID=deviceID;
                 slot[i].lastGoodDance=Date.now();
                 
-                emitCommandByDeviceID(deviceID, "console", "you're added to slot " + i + ", " +deviceID);
+                emitCommandByDeviceID(deviceID, "assignSlot", i);
                 ableToAdd=true;
                 break;
             }

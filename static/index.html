@@ -56,7 +56,7 @@
         var deviceID;
         var buttonPushed=false;
         var justFullScreened=false;        
-
+        var assignedSlot=-1;
 
 
 
@@ -158,8 +158,16 @@ socket.on('command', function(data) { //incoming server instructions
           console.log(data.command, data.parameter);
           if (data.command==="disconnected"){
             $("#console").html("DISCONNECTED");
-            sendDeviceID()
+            sendDeviceID();
+            assignedSlot=-1;
             }
+
+          if (data.command==="assignSlot"){
+            $("#console").html("SLOT " + data.parameter);
+            assignedSlot=data.parameter;
+            }
+          
+
           
 });
 
