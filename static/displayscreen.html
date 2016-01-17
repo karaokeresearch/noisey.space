@@ -8,30 +8,38 @@
 <style>
 
 
-
-/*
-meter { -webkit-appearance: none; 
-    transform: rotate(90deg);
-    } //Crucial, this will disable the default styling in Webkit browsers
-
-meter::-webkit-meter-bar {
-    background: #FFF;
-    border: 1px solid #CCC;
+@font-face {
+    font-family: "Press Start 2P";
+    src: url('PressStart2P.ttf') format('truetype');
 }
 
-meter::-webkit-meter-optimum-value {
-    background: #87C7DE;
-    background: -moz-linear-gradient(top, #a1d4e6 0%, #6bb4d1 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #a1d4e6), color-stop(100%, #6bb4d1));
-    background: -webkit-linear-gradient(top, #a1d4e6 0%, #6bb4d1 100%);
-    background: -o-linear-gradient(top, #a1d4e6 0%, #6bb4d1 100%);
-    background: -ms-linear-gradient(top, #a1d4e6 0%, #6bb4d1 100%);
-    background: linear-gradient(to bottom, #a1d4e6 0%, #6bb4d1 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#a1d4e6', endColorstr='#6bb4d1',GradientType=0);
-}
-*/
 
 
+body{background-color:#000000; font-family:"Press Start 2P"; font-size:2vw; color:#FFFFFF}
+
+  .pbcontainer {
+      background-color: white;
+      padding: 5px;
+      height: 405px;
+      width:110px;
+    }
+
+
+  .progressbar {
+      background-color: black;
+      padding: 0px;
+      height: 100%;
+      width:100%;
+    }
+    
+   .colorbar{
+        width: 100%;
+       height: 0%;
+       padding:0px;
+       position: relative;
+       top: 100%;
+
+    }
 
 
  
@@ -42,12 +50,36 @@ meter::-webkit-meter-optimum-value {
 
 <body>
 
-<p>Display a gauge:</p>
-<br><br>1 <meter id="meter0" value="0" min="0" max="50"></meter> <span id="button0">B</span>
-<br><br>2 <meter id="meter1" value="0" min="0" max="50"></meter> <span id="button1">B</span>
-<br><br>3 <meter id="meter2" value="0" min="0" max="50"></meter> <span id="button2">B</span>
+<div id="header">&nbsp;</div>
 
-<br><br>
+
+<div style="position: absolute; left:10%;">
+    <div class="pbcontainer">
+     <div class="progressbar"><div class="colorbar" id="bar0" style="background-color: #FF5555;"></div></div>
+    </div>
+<span id="button0">B</span>
+
+</div>
+
+
+
+<div style="position: absolute; left:35%;">
+<div class="pbcontainer">
+ <div class="progressbar"><div class="colorbar" id="bar1" style="background-color: #55FF55;"></div></div>
+</div>
+
+<span id="button1">B</span>
+</div>
+
+
+<div style="position: absolute; left:60%;">
+<div class="pbcontainer">
+ <div class="progressbar"><div class="colorbar" id="bar2" style="background-color: #00AAAA;"></div></div>
+</div>
+
+<span id="button2">B</span>
+</div>
+
 
 
 
@@ -69,6 +101,7 @@ var sink=[];
 var oggHTTPserver='http://localhost:8080/';
 var foundVocal=false;
 var foundSong=false;
+var titleLoop;
 
 var startVol=0;
 var maxVol=0.75;
@@ -82,7 +115,6 @@ var loadRandomSong= function(){
  foundVocal=false;
  foundSong=false;
 
-
  
  var iType;
  var s=Math.floor(Math.random() * manifest.length);
@@ -90,6 +122,7 @@ var loadRandomSong= function(){
  
  console.log("Found:   " + manifest[s].name);
  
+ $("#header").html(manifest[s].name);
   for (t in manifest[s].children){  //once through to see if "vocal" and "song" are different.
      
      if (manifest[s].children[t].name.match(/vocal/i)){//found "vocal.ogg"
@@ -108,8 +141,14 @@ loadSongTracks(s,0); //start with track 0
 
 
 
+var loadSongTracks = function(s,t){
+console.log ("waiting 2 seconds")
+setTimeout(function(){immediatelyLoadSongTracks(s,t)},2000);
+    
+}
 
-var loadSongTracks = function(s,t){//now, actually load the files
+
+var immediatelyLoadSongTracks = function(s,t){//now, actually load the files
 var vocalsLoaded=false;
     
     if (manifest[s].children[t]){//make sure the entry exists.
@@ -145,7 +184,7 @@ var vocalsLoaded=false;
                           onload: function() {
                             loadSongTracks(s,t+1);
                           },
-                          onend: loadRandomSong
+                          onend: function(){location.reload();}
     
                           }));
                    vocalsLoaded=true;
@@ -191,7 +230,7 @@ var vocalsLoaded=false;
                           onload: function() {
                             loadSongTracks(s,t+1);
                           },
-                          onend: loadRandomSong
+                          onend: function(){location.reload();}
     
                           }));
                           vocalsLoaded=true;
@@ -245,7 +284,9 @@ var vocalsLoaded=false;
  }else{
     
     console.log("All Tracks loaded. Playing.");
-    //vocals[0].onend= function(){loadRandomSong()};
+    
+    titleLoop.fade(titleLoop.volume(), 0,5000, function(){titleLoop.stop();})
+    
     play();
     }
  
@@ -321,6 +362,13 @@ $( document ).ready(function() {
 
 
 
+
+
+
+
+
+
+
     $.ajax({
       dataType:'json',
       type: 'GET',
@@ -329,12 +377,42 @@ $( document ).ready(function() {
         // `data` contains parsed JSON
         manifest=data.children;
         console.log(manifest.length + " songs available");
-        loadRandomSong();
+        setTimeout(function(){loadRandomSong();},20000) //enough time to allow memory to be reclaimed
+        setTimeout(function(){
+        titleLoop = new Howl({
+            urls: ['BitQuestLoop.ogg'],
+            autoplay: true,
+            loop: true,
+            volume: maxVol
+            }
+        );
+            },5000) //enough time to allow memory to be reclaimed
+
+
+
+
+        ding = new Howl({
+            urls: ['ding.ogg'],
+            autoplay: true,
+            loop: false,
+            volume: maxVol
+            }
+        );
+
+        
+
+
+
+
+
+        
         
       },
       error: function(jqXHR, textStatus, errorThrown) {
          console.log("COULD NOT LOAD MANIFEST!");
       }
+      
+      
     });
 
 
@@ -362,14 +440,14 @@ socket.on('clientUpdate', function(data) { //client dancability info
         
     }
     
-    
-    
-    $( "#meter"+data.slot).animate({
-        value: data.danceScore,
-      }, gradient, function() {
-        // Animation complete.
-      });
+     
+     var myScore = (data.danceScore * 1.5);
+     if (myScore>100){myScore=100}
+     $( "#bar" +data.slot).css("height", myScore + "%");
+     $( "#bar" +data.slot).css("top",  100-myScore + "%");        
       
+     
+     
       danceScore =data.danceScore;
     
 	

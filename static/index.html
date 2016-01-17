@@ -56,19 +56,25 @@
         var justFullScreened=false;        
         var assignedSlot=-1;
         var fingersDown=0; //prevent double-tap
+        
+        var inactiveColor = "grey";
+        var activeColor = "white";
 
-
+        
+        var downHappened=0;
+        var upHappened=0;
 
 
 $(document).ready(function () { //
 
 $('#wholepage').bind('touchstart', function(e){
     fingersDown++;
-
+    //downHappened++;
+   //$("#slot").html(downHappened + " " + upHappened);
 if (fingersDown===1){
     buttonPushed=true;
     sendDanceStatus();    
-    $("#thebutton").css("background-color", "white");
+    $("#thebutton").css("background-color", activeColor);
     $("#console").html("NOW DANCE!");
 
    if (justFullScreened===true){ //the second time you push the button it locks orientation in case you didn't get it the first time.
@@ -93,11 +99,12 @@ if (fingersDown===1){
 
 $('#wholepage').bind('touchend', function(e){
     fingersDown--;
-
+    //upHappened++;
+    //$("#slot").html(downHappened + " " + upHappened);
 if (fingersDown===0){    
     buttonPushed=false;
     sendDanceStatus();    
-    $("#thebutton").css("background-color", "grey");
+    $("#thebutton").css("background-color", inactiveColor);
     navigator.vibrate(100);
 }
 })                                      
@@ -172,6 +179,9 @@ socket.on('command', function(data) { //incoming server instructions
           if (data.command==="disconnected"){
             $("#console").html("WAITING YOUR TURN...");
             $("#slot").html('');
+            activeColor="white";
+            inactiveColor="grey"
+            
             sendDeviceID();
             assignedSlot=-1;
             }
@@ -179,6 +189,25 @@ socket.on('command', function(data) { //incoming server instructions
           if (data.command==="assignSlot"){
             $("#slot").html(data.parameter+1);
             assignedSlot=data.parameter;
+            if (assignedSlot===0){
+                activeColor="#FF5555";
+                inactiveColor='#AA0000';
+            }
+
+            if (assignedSlot===1){
+                activeColor="#55FF55";
+                inactiveColor='00AA00';
+            }
+            
+            if (assignedSlot===2){
+                activeColor="#00AAAA";
+                inactiveColor='009999';
+            }
+
+            $("#thebutton").css("background-color", inactiveColor);
+
+
+
             }
 
           if (data.command==="secondsLeft"){

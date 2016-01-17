@@ -26,7 +26,8 @@
   "dependencies": {
     "express": "4.13.3",
     "socket.io": "1.4.2",
-    "cookie-parser": "1.4.0"
+    "cookie-parser": "1.4.0",
+    "directory-tree": "0.1.1"
   },
   "keywords": [
     "stems",
