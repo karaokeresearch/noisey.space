@@ -1,6 +1,6 @@
  <script type="text/javascript" src="jquery-2.1.4.js"></script>
  <script type="text/javascript" src="/socket.io/socket.io.js"></script>
- 
+     <script type="text/javascript" src="howler.js"></script>
  <!DOCTYPE html>
 <html>
 
@@ -61,18 +61,236 @@ meter::-webkit-meter-optimum-value {
 <script>
 var socket = io('/display');
 var danceScore=0;
+var manifest;
+var vocals=[];
+var drums=[];
+var bass=[];
+var sink=[];
+var oggHTTPserver='http://localhost:8080/';
+var foundVocal=false;
+var foundSong=false;
+
+var startVol=0;
+var maxVol=0.75;
+
+var loadRandomSong= function(){
+ 
+ vocals=[];
+ drums=[]; 
+ bass=[];  
+ sink=[];  
+ 
+ var iType;
+ var s=Math.floor(Math.random() * manifest.length);
+ 
+ 
+ console.log("Found:   " + manifest[s].name);
+ 
+  for (t in manifest[s].children){  //once through to see if "vocal" and "song" are different.
+     
+     if (manifest[s].children[t].name.match(/vocal/i)){//found "vocal.ogg"
+        foundVocal=true;
+     }
+    if (manifest[s].children[t].name.match(/song/i)){//found "song.ogg"
+        foundSong=true;
+     }
+ }   
+
+loadSongTracks(s,0); //start with track 0
+ 
+ 
+    
+}
+
+
+
+
+var loadSongTracks = function(s,t){//now, actually load the files
+    
+    if (manifest[s].children[t]){//make sure the entry exists.
+     
+     
+     var trackToLoad=oggHTTPserver + manifest[s].children[t].path;      
+     //console.log("let's try: " + trackToLoad);
+     
+     if (manifest[s].children[t].name.match(/bass/i) || manifest[s].children[t].name.match(/rhythm/i) ){//bass
+        
+      iType="bass";
+      bass.push ( new Howl({
+                  urls: [trackToLoad],
+                  autoplay: false,
+                  loop: false,
+                  volume: startVol,
+                  onload: function() {
+                    loadSongTracks(s,t+1);
+                  }}));
+  
+  
+  //   }else if (manifest[s].children[t].name.match(/guitar/i) || manifest[s].children[t].name.match(/keys/i) || manifest[s].children[t].name.match(/piano/i) ){//guitars or keys
+  //      iType="keysguitar";
+     }else if (manifest[s].children[t].name.match(/vocal/i)){//vocal
+          iType="vocal";
+          vocals.push ( new Howl({
+                      urls: [trackToLoad],
+                      autoplay: false,
+                      loop: false,
+                      volume: maxVol,
+                      onload: function() {
+                        loadSongTracks(s,t+1);
+                      }}));
+    
+
+
+
+     }else if (manifest[s].children[t].name.match(/song/i)){//song
+            if (foundVocal && foundSong){
+                iType="sink";
+                sink.push ( new Howl({
+                              urls: [trackToLoad],
+                              autoplay: false,
+                              loop: false,
+                              volume: startVol,
+                              onload: function() {
+                                loadSongTracks(s,t+1);
+                              }}));
+
+
+            }else{
+               iType="vocal";    
+               vocals.push ( new Howl({
+                      urls: [trackToLoad],
+                      autoplay: false,
+                      loop: false,
+                      volume: startVol,
+                      onload: function() {
+                        loadSongTracks(s,t+1);
+                      }}));
+               
+               
+               
+            }    
+     }else if (manifest[s].children[t].name.match(/drum/i)){//drums
+        iType="drum";
+          drums.push ( new Howl({
+                      urls: [trackToLoad],
+                      autoplay: false,
+                      loop: false,
+                      volume: startVol,
+                      onload: function() {
+                        loadSongTracks(s,t+1);
+                      }}));
+        
+        
+     }else{ //everything else (player 3)
+        iType="sink";
+                  sink.push ( new Howl({
+                      urls: [trackToLoad],
+                      autoplay: false,
+                      loop: false,
+                      volume: startVol,
+                      onload: function() {
+                        loadSongTracks(s,t+1);
+                      }}));
+
+     }
+     
+     console.log("Loading: " + manifest[s].children[t].path  + " (" + iType +   ") " + (t +1) , "of "  + manifest[s].children.length);
+     
+     
+ }else{
+    console.log("All Tracks loaded. Playing.");
+    
+    play();
+    }
+ 
+}  //end load songs function
+
+
+function setTrackVol(instrument,vol){
+if (instrument==="drums"){
+    drums.forEach(function(whichTrack){
+       console.log(whichTrack);
+       whichTrack.volume(vol);
+    });
+}
+
+if (instrument==="bass"){
+    bass.forEach(function(whichTrack){
+       whichTrack.volume(vol);
+    });
+}
+
+if (instrument==="sink"){
+    sink.forEach(function(whichTrack){
+       whichTrack.volume(vol);
+    });
+}
+
+
+
+
+
+}
+
+
+
+
+
+var play = function() {
+    vocals.forEach(function(whichTrack){
+       whichTrack.play();
+    });
+    drums.forEach(function(whichTrack){
+       whichTrack.play();
+    });
+    bass.forEach(function(whichTrack){
+       whichTrack.play();
+    });
+    sink.forEach(function(whichTrack){
+       whichTrack.play();
+    });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 $( document ).ready(function() {
     console.log( "ready!" );
 
-//    setInterval(function(){
-//        $( "#meter1" ).animate({
-//            value: Math.random()*10,
-//          }, 400, function() {
-//            // Animation complete.
-//          });
-//        },500);
-    
+
+
+    $.ajax({
+      dataType:'json',
+      type: 'GET',
+      url: oggHTTPserver + "manifest.JSON",
+      success: function(data, textStatus, jqXHR) {
+        // `data` contains parsed JSON
+        manifest=data.children;
+        console.log(manifest.length + " songs available");
+        loadRandomSong();
+        
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+         console.log("COULD NOT LOAD MANIFEST!");
+      }
+    });
+
 
 
 
