@@ -74,7 +74,7 @@ var startVol=0;
 var maxVol=0.75;
 
 var loadRandomSong= function(){
- 
+
  vocals=[];
  drums=[]; 
  bass=[];  
@@ -106,6 +106,7 @@ loadSongTracks(s,0); //start with track 0
 
 
 var loadSongTracks = function(s,t){//now, actually load the files
+var vocalsLoaded=false;
     
     if (manifest[s].children[t]){//make sure the entry exists.
      
@@ -130,19 +131,38 @@ var loadSongTracks = function(s,t){//now, actually load the files
   //      iType="keysguitar";
      }else if (manifest[s].children[t].name.match(/vocal/i)){//vocal
           iType="vocal";
-          vocals.push ( new Howl({
-                      urls: [trackToLoad],
-                      autoplay: false,
-                      loop: false,
-                      volume: maxVol,
-                      onload: function() {
-                        loadSongTracks(s,t+1);
-                      }}));
+          
+               if (!vocalsLoaded){//don't double-fire the next song
+                   vocals.push ( new Howl({
+                          urls: [trackToLoad],
+                          autoplay: false,
+                          loop: false,
+                          volume: maxVol,
+                          onload: function() {
+                            loadSongTracks(s,t+1);
+                          },
+                          onend: loadRandomSong
     
+                          }));
+                   vocalsLoaded=true;
+               }else{           
+                
+                                   vocals.push ( new Howl({
+                          urls: [trackToLoad],
+                          autoplay: false,
+                          loop: false,
+                          volume: maxVol,
+                          onload: function() {
+                            loadSongTracks(s,t+1);
+                          }
+                          }));
+                }
+                
 
 
 
-     }else if (manifest[s].children[t].name.match(/song/i)){//song
+
+     }else if (manifest[s].children[t].name.match(/song/i)){//sink
             if (foundVocal && foundSong){
                 iType="sink";
                 sink.push ( new Howl({
@@ -157,14 +177,35 @@ var loadSongTracks = function(s,t){//now, actually load the files
 
             }else{
                iType="vocal";    
-               vocals.push ( new Howl({
-                      urls: [trackToLoad],
-                      autoplay: false,
-                      loop: false,
-                      volume: startVol,
-                      onload: function() {
-                        loadSongTracks(s,t+1);
-                      }}));
+
+               if (!vocalsLoaded){//don't double-fire the next song
+                   vocals.push ( new Howl({
+                          urls: [trackToLoad],
+                          autoplay: false,
+                          loop: false,
+                          volume: maxVol,
+                          onload: function() {
+                            loadSongTracks(s,t+1);
+                          },
+                          onend: loadRandomSong
+    
+                          }));
+                          vocalsLoaded=true;
+               }else{           
+                
+                                   vocals.push ( new Howl({
+                          urls: [trackToLoad],
+                          autoplay: false,
+                          loop: false,
+                          volume: maxVol,
+                          onload: function() {
+                            loadSongTracks(s,t+1);
+                          }
+                          }));
+                }
+                
+                
+                
                
                
                
@@ -198,8 +239,9 @@ var loadSongTracks = function(s,t){//now, actually load the files
      
      
  }else{
-    console.log("All Tracks loaded. Playing.");
     
+    console.log("All Tracks loaded. Playing.");
+    //vocals[0].onend= function(){loadRandomSong()};
     play();
     }
  
