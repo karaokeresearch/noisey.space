@@ -46,7 +46,7 @@ meter::-webkit-meter-optimum-value {
 <br><br>1 <meter id="meter0" value="0" min="0" max="50"></meter> <span id="button0">B</span>
 <br><br>2 <meter id="meter1" value="0" min="0" max="50"></meter> <span id="button1">B</span>
 <br><br>3 <meter id="meter2" value="0" min="0" max="50"></meter> <span id="button2">B</span>
-<br><br>4 <meter id="meter3" value="0" min="0" max="50"></meter> <span id="button3">B</span>
+
 <br><br>
 
 
@@ -207,20 +207,20 @@ var loadSongTracks = function(s,t){//now, actually load the files
 
 
 function setTrackVol(instrument,vol){
-if (instrument==="drums"){
+if (instrument===0){
     drums.forEach(function(whichTrack){
-       console.log(whichTrack);
+       //console.log(whichTrack);
        whichTrack.volume(vol);
     });
 }
 
-if (instrument==="bass"){
+if (instrument===1){
     bass.forEach(function(whichTrack){
        whichTrack.volume(vol);
     });
 }
 
-if (instrument==="sink"){
+if (instrument===2){
     sink.forEach(function(whichTrack){
        whichTrack.volume(vol);
     });
@@ -305,6 +305,18 @@ socket.on('clientUpdate', function(data) { //client dancability info
         $( "#button"+data.slot).css("background-color", "pink");
     }
     if (data.danceScore<danceScore){ gradient=250}else{gradient=0}
+    
+    //console.log(data.slot);
+    if (data.slot<3){
+        if (data.buttonPushed){
+            setTrackVol(data.slot, data.danceScore/70)
+        }else{
+            setTrackVol(data.slot,0)            
+        }   
+        
+    }
+    
+    
     
     $( "#meter"+data.slot).animate({
         value: data.danceScore,

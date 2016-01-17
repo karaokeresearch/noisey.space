@@ -67,7 +67,7 @@ client.on('connection', function(socket){
   
   socket.on('danceStatus', function (data) { //incoming dance amount data
                 if (socket.deviceID){ //we have a deviceID associated with this device
-                   for (var i=0; i<4; i++){ //let's run through the clients
+                   for (var i=0; i<3; i++){ //let's run through the clients
                        if (slot[i] && slot[i].deviceID===socket.deviceID){ //is this a slotted client?
                             //console.log("match", socket.deviceID, i);
                             data.slot=i;
@@ -156,7 +156,7 @@ var allocateSlots = function(){
     //console.log("we found ", deviceID);
     var alreadyAdded=false;
     
-    for (var i=0; i<4; i++){//look through the slot array and see if the entry is already there
+    for (var i=0; i<3; i++){//look through the slot array and see if the entry is already there
         if (slot[i] && slot[i].deviceID===deviceID){
             alreadyAdded=true;
             emitCommandByDeviceID(deviceID, "assignSlot", i);
@@ -165,7 +165,7 @@ var allocateSlots = function(){
     
     if (!alreadyAdded && deviceID) {  //if not, add it!... but only if deviceID is defined 
         var ableToAdd=false;
-        for (var i=0; i<4; i++){
+        for (var i=0; i<3; i++){
             if (!slot[i]){
                 slot[i]={};
                 slot[i].deviceID=deviceID;
@@ -192,7 +192,7 @@ setInterval(function(){  //queue that runs every second to check on user activit
                     //console.log(placeInLine);
                     //console.log("------");
 
-    for (var i=0; i<4; i++){ //is this a slotted client?
+    for (var i=0; i<3; i++){ //is this a slotted client?
         if (slot[i]){
                 if (Date.now() - slot[i].lastGoodDance >15000){ //timeout
                     console.log("more than 15 seconds since good user activity on slot", i);
