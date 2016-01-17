@@ -55,7 +55,7 @@
         var buttonPushed=false;
         var justFullScreened=false;        
         var assignedSlot=-1;
-
+        var fingersDown=0; //prevent double-tap
 
 
 
@@ -63,7 +63,9 @@
 $(document).ready(function () { //
 
 $('#wholepage').bind('touchstart', function(e){
-    
+    fingersDown++;
+
+if (fingersDown===1){
     buttonPushed=true;
     sendDanceStatus();    
     $("#thebutton").css("background-color", "white");
@@ -84,13 +86,20 @@ $('#wholepage').bind('touchstart', function(e){
         console.log ("fullscreening and attempting to lock orientation")
    }
  navigator.vibrate(100);
+}
+ 
+ 
 })                                      
 
 $('#wholepage').bind('touchend', function(e){
+    fingersDown--;
+
+if (fingersDown===0){    
     buttonPushed=false;
     sendDanceStatus();    
     $("#thebutton").css("background-color", "grey");
     navigator.vibrate(100);
+}
 })                                      
 
 
@@ -114,24 +123,29 @@ $('#wholepage').bind('touchend', function(e){
         gyro.startTracking(function(o) {
 
 
-            
-            xyzArray[0].push(o.x);
-            if (xyzArray[0].length>20){xyzArray[0].shift();}
-            xyzArray[1].push(o.y);
-            if (xyzArray[1].length>20){xyzArray[1].shift();}
-            xyzArray[2].push(o.z);
-            if (xyzArray[2].length>20){xyzArray[2].shift();}
-
-            for (var i=0; i<3; i++){
-                xyzMin[i]= xyzArray[i][0];
-                xyzMax[i]= xyzArray[i][0];
-                for (var j=1; j<xyzArray[i].length; j++) {
-                    if (xyzArray[i][j]<xyzMin[i]) {xyzMin[i]=xyzArray[i][j]};
-                    if (xyzArray[i][j]>xyzMax[i]) {xyzMax[i]=xyzArray[i][j]};
+            if (o.x && o.y && o.z){ //return undef until the API comes online
+                xyzArray[0].push(o.x);
+                if (xyzArray[0].length>20){xyzArray[0].shift();}
+                xyzArray[1].push(o.y);
+                if (xyzArray[1].length>20){xyzArray[1].shift();}
+                xyzArray[2].push(o.z);
+                if (xyzArray[2].length>20){xyzArray[2].shift();}
+    
+                for (var i=0; i<3; i++){
+                    xyzMin[i]= xyzArray[i][0];
+                    xyzMax[i]= xyzArray[i][0];
+                    for (var j=1; j<xyzArray[i].length; j++) {
+                        if (xyzArray[i][j]<xyzMin[i]) {xyzMin[i]=xyzArray[i][j]};
+                        if (xyzArray[i][j]>xyzMax[i]) {xyzMax[i]=xyzArray[i][j]};
+                    }
                 }
+                danceScore = ( Math.abs(xyzMin[0] - xyzMax[0]) +    Math.abs(xyzMin[1] - xyzMax[1])+   Math.abs(xyzMin[2] - xyzMax[2]));
             }
-
-            danceScore = ( Math.abs(xyzMin[0] - xyzMax[0]) +    Math.abs(xyzMin[1] - xyzMax[1])+   Math.abs(xyzMin[2] - xyzMax[2]));
+            
+            //if (xyzArray[0].length>19){
+            //    if (o.z){danceScore = ( Math.abs(xyzMin[0] - xyzMax[0]) +    Math.abs(xyzMin[1] - xyzMax[1])+   Math.abs(xyzMin[2] - xyzMax[2]));}
+            //}else{danceScore=0;}
+            //$("#slot").html(danceScore);
             //$("#console").html(Math.abs(xyzMin[0] - xyzMax[0])    + "<br>" + Math.abs(xyzMin[1] - xyzMax[1])    + "<br>" + Math.abs(xyzMin[2] - xyzMax[2])    + "<br>" +  danceScore  + "<br>" +publishDate );
 
             ticksSincePublish++;
@@ -163,12 +177,12 @@ socket.on('command', function(data) { //incoming server instructions
             }
 
           if (data.command==="assignSlot"){
-            $("#slot").html(data.parameter);
+            $("#slot").html(data.parameter+1);
             assignedSlot=data.parameter;
             }
 
           if (data.command==="secondsLeft"){
-            $("#console").html("START DANCING OR PUSH THE BUTTON!<BR>HURRY! " + data.parameter + " SECONDS LEFT!");
+            $("#console").html("START DANCING OR HOLD THE BUTTON!<BR>HURRY! " + data.parameter + " SECONDS LEFT!");
             //navigator.vibrate(100); //add back in before production
             assignedSlot=data.parameter;
             }
@@ -191,7 +205,10 @@ var sendDanceStatus = function(){
         danceScore: Math.round(danceScore*100)/100, //two digit hack
     });
     
-    if (danceScore>10 && buttonPushed===true){$("#console").html("YEAH!!!! KEEP DANCING!!!!");}
+    if (danceScore>10 && buttonPushed===true){$("#console").html("YEAH!!!! KEEP DANCING AND HOLDING THAT BUTTON!!!!");}
+    if (danceScore>10 && buttonPushed===false){$("#console").html("YEAH!!!! KEEP DANCING! HOLD THE BUTTON TO MAKE NOISE!!!!");}
+    if (danceScore<10 && buttonPushed===true){$("#console").html("NOW START DANCING TO MAKE NOISE");}
+    
     
 };
 
