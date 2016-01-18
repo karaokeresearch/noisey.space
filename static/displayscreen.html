@@ -15,7 +15,35 @@
 
 
 
-body{background-color:#000000; font-family:"Press Start 2P"; font-size:2vw; color:#FFFFFF}
+body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; color:#FFFFFF}
+
+
+
+.centeredDiv{
+  position:absolute;
+  color:#fff;
+  width:90%;
+  top:50%;
+  left:50%;
+  /*background-color:red; */
+  padding:15px;
+  transform: translate(-50%,-50%);
+   text-align: center;
+} 
+
+
+
+  #thegame{
+    display:none
+    }
+
+#titlescreen{
+    display:none
+    }
+
+
+
+
 
   .pbcontainer {
       background-color: white;
@@ -49,37 +77,49 @@ body{background-color:#000000; font-family:"Press Start 2P"; font-size:2vw; colo
 
 
 <body>
+<div id="presents" class="centeredDiv">Karaoke Research Council Presents</div>
 
-<div id="header">&nbsp;</div>
-
-
-<div style="position: absolute; left:10%;">
-    <div class="pbcontainer">
-     <div class="progressbar"><div class="colorbar" id="bar0" style="background-color: #FF5555;"></div></div>
+<div id="titlescreen" class="centeredDiv">Karaoke Research Council Presents<br><br><br><br><img src="ns_logo.png" style="width:35%"><br><br><br><br><br><br><br><br><br><span style="color:grey;">connect to</span><br><br><br><span style="font-size:2vw">HTTP://NS.MOD.BZ </span><br><br><span style="color:grey;"><br>on your mobile browser to play. <br><br></span>
+<div id="loadupdates">&nbsp;</div>
     </div>
-<span id="button0">B</span>
+
+
+
+
+<div id="thegame">
+    NOISEY.SPACE  &nbsp;&nbsp;&nbsp; http://ns.mod.bz
+    <div id="header">&nbsp;</div>
+    <br><br>
+    
+    <div style="position: absolute; left:10%;">
+        <div class="pbcontainer">
+         <div class="progressbar"><div class="colorbar" id="bar0" style="background-color: #FF5555;"></div></div>
+        </div><br>
+    <span id="button0">B</span>
+    
+    </div>
+    
+    
+    
+    <div style="position: absolute; left:35%;">
+    <div class="pbcontainer">
+     <div class="progressbar"><div class="colorbar" id="bar1" style="background-color: #55FF55;"></div></div>
+    </div>
+    <br>
+    <span id="button1">B</span>
+    </div>
+    
+    
+    <div style="position: absolute; left:60%;">
+    <div class="pbcontainer">
+     <div class="progressbar"><div class="colorbar" id="bar2" style="background-color: #00AAAA;"></div></div>
+    </div>
+    <br>
+    <span id="button2">B</span>
+    </div>
+
 
 </div>
-
-
-
-<div style="position: absolute; left:35%;">
-<div class="pbcontainer">
- <div class="progressbar"><div class="colorbar" id="bar1" style="background-color: #55FF55;"></div></div>
-</div>
-
-<span id="button1">B</span>
-</div>
-
-
-<div style="position: absolute; left:60%;">
-<div class="pbcontainer">
- <div class="progressbar"><div class="colorbar" id="bar2" style="background-color: #00AAAA;"></div></div>
-</div>
-
-<span id="button2">B</span>
-</div>
-
 
 
 
@@ -105,6 +145,7 @@ var titleLoop;
 
 var startVol=0;
 var maxVol=0.75;
+var currentSong;
 
 var loadRandomSong= function(){
 
@@ -115,14 +156,21 @@ var loadRandomSong= function(){
  foundVocal=false;
  foundSong=false;
 
+
+
  
  var iType;
  var s=Math.floor(Math.random() * manifest.length);
+
+ 
  
  
  console.log("Found:   " + manifest[s].name);
  
- $("#header").html(manifest[s].name);
+ currentSong=manifest[s].name;
+ $("#loadupdates").html("LOADING: " + currentSong);
+ 
+
   for (t in manifest[s].children){  //once through to see if "vocal" and "song" are different.
      
      if (manifest[s].children[t].name.match(/vocal/i)){//found "vocal.ogg"
@@ -285,6 +333,11 @@ var vocalsLoaded=false;
     
     console.log("All Tracks loaded. Playing.");
     
+    setTimeout(function(){
+        $("#titlescreen").css("display", "none");
+        $("#thegame").css("display", "inline");
+    },5000);
+    $("#header").html("PLAYING: " + currentSong );
     titleLoop.fade(titleLoop.volume(), 0,5000, function(){titleLoop.stop();})
     
     play();
@@ -377,7 +430,7 @@ $( document ).ready(function() {
         // `data` contains parsed JSON
         manifest=data.children;
         console.log(manifest.length + " songs available");
-        setTimeout(function(){loadRandomSong();},20000) //enough time to allow memory to be reclaimed
+        
         setTimeout(function(){
         titleLoop = new Howl({
             urls: ['BitQuestLoop.ogg'],
@@ -388,7 +441,13 @@ $( document ).ready(function() {
         );
             },5000) //enough time to allow memory to be reclaimed
 
+        setTimeout(function(){
+        $("#presents").css("display", "none");
+        $("#titlescreen").css("display", "inline");
+            },5000) //cancel KRC Presents and load main screen
 
+
+        setTimeout(function(){loadRandomSong();},20000) //enough time to allow memory to be reclaimed
 
 
         ding = new Howl({
@@ -422,12 +481,34 @@ $( document ).ready(function() {
 
 socket.on('clientUpdate', function(data) { //client dancability info
 	var gradient=0;
+	var activeColor;
+	var inactiveColor;
 	//console.log(data);
-    if (data.buttonPushed){
-        $( "#button"+data.slot).css("background-color", "red");
-    }else{
-        $( "#button"+data.slot).css("background-color", "pink");
+
+
+    if (data.slot===0){
+        activeColor="#FF5555";
+        inactiveColor='#770000';
     }
+
+    if (data.slot===1){
+        activeColor="#55FF55";
+        inactiveColor='007700';
+    }
+    
+    if (data.slot===2){
+        activeColor="#00AAAA";
+        inactiveColor='007777';
+    }
+    
+    if (data.buttonPushed){
+        $( "#button"+data.slot).css("background-color", activeColor);
+    }else{
+        $( "#button"+data.slot).css("background-color", inactiveColor);
+    }
+
+
+
     if (data.danceScore<danceScore){ gradient=250}else{gradient=0}
     
     //console.log(data.slot);
