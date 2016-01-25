@@ -77,8 +77,10 @@ body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; co
 
 
 <body>
+
 <div id="presents" class="centeredDiv">Karaoke Research Council Presents</div>
 
+<img id="forkme" style="display:none; position: fixed; top: 0; right: 0; border: 0;" src="ForkMeOnGithub.png" >
 <div id="titlescreen" class="centeredDiv">Karaoke Research Council Presents<br><br><br><br><img src="ns_logo.png" style="width:35%"><br><br><br><br><br><br><br><br><br><span style="color:grey;">connect to</span><br><br><br><span style="font-size:2vw">HTTP://NS.MOD.BZ </span><br><br><span style="color:grey;"><br>on your mobile browser to play. <br><br></span>
 <div id="loadupdates">&nbsp;</div>
     </div>
@@ -87,7 +89,8 @@ body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; co
 
 
 <div id="thegame">
-    NOISEY.SPACE  &nbsp;&nbsp;&nbsp; http://ns.mod.bz
+
+NOISEY.SPACE  &nbsp;&nbsp;&nbsp; http://ns.mod.bz
     <div id="header">&nbsp;</div>
     <br><br>
     
@@ -335,6 +338,7 @@ var vocalsLoaded=false;
     
     setTimeout(function(){
         $("#titlescreen").css("display", "none");
+        $("#forkme").css("display", "none");
         $("#thegame").css("display", "inline");
     },5000);
     $("#header").html("PLAYING: " + currentSong );
@@ -444,6 +448,7 @@ $( document ).ready(function() {
         setTimeout(function(){
         $("#presents").css("display", "none");
         $("#titlescreen").css("display", "inline");
+        $("#forkme").css("display", "inline");
             },5000) //cancel KRC Presents and load main screen
 
 

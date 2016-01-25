@@ -14,21 +14,148 @@
         
         
 <style>
+
+@font-face {
+    font-family: "Press Start 2P";
+    src: url('PressStart2P.ttf') format('truetype');
+}
+
+
+
+
+body{
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
+  user-select: none;          /* Likely future */      
+  padding: 0; 
+  margin: 0; 
+}
+
+
+
+
+#firstStripe{
+  position:absolute;
+  width:100%;
+  height:100%;
+  top:0px;
+  left:0px;
+  background-color:#FFFFFF;
+  padding:0px;
+  text-align: center;
+} 
+
+
+
+#secondStripe{
+  position:absolute;
+  width:76%;
+  height:76%;
+  top:12%;
+  left:12%;
+  background-color:#FFFFFF;
+  padding:0px;
+  text-align: center;
+} 
+
+
+#thirdStripe{
+  position:absolute;
+  width:52%;
+  height:52%;
+  top:24%;
+  left:24%;
+  background-color:#FFFFFF;
+  padding:0px;
+  text-align: center;
+} 
+
+
+
+
+
+#fourthStripe{
+  position:absolute;
+  width:28%;
+  height:28%;
+  top:36%;
+  left:36%;
+  background-color:#FFFFFF;
+  padding:0px;
+  text-align: center;
+} 
+
+
+
+
+
+#theButton{
+  position:absolute;
+  width:25%;
+  height:25%;
+  top:37%;
+  left:37%;
+  
+  
+  background:url("button_red_up.png") center center;
+  background-repeat: no-repeat;
+  background-size: 100%;
+  padding:0px;
+
+} 
+
+
+#slot{
+font-family: "Press Start 2P";
+font-size: 3vw;
+position: absolute; 
+left: 3vw; top: 3vw; 
+color: black; 
+font-family:Press Start 2P;
+font-size:5vw; 
+height:10vw; 
+
+
+}    
+    
+
+#console{
+position: absolute; 
+left: 3vw; 
+bottom: 3vw; 
+font-family: "Press Start 2P";
+font-size: 3vw;
+color: black; 
+font-size:5vw
+
+
+}
+
 			
 </style>
 
 
 
-<body bgcolor="#000000" style="padding: 0; margin: 0;">
+<body bgcolor="#000000" style="touch-action: none;">
 
-
+<!--
     <div style="position: absolute; left: 0px; top: 0px; background-color:#222222; color: white; font-family:Sans; font-size:6vw; height:10vw; width:10vw;" id="slot"></div>
-<div style="background-color:black; height:100%; width:100%; touch-action: none;" id="wholepage">
     <div style="position: absolute; right: 25vw; top: 25vw; background-color:grey; height:50vw; width:50vw;" id="thebutton"></div>
     <div style="position: absolute; right: 0px; top: 100vw; background-color:black; color: white; font-family:Sans; height:50vw; width:100vw;" id="console"></div>                                                                                                                                   
 
+    -->
+
+<div id="firstStripe"></div>
+<div id="secondStripe"></div>
+<div id="thirdStripe"></div>
+<div id="fourthStripe"></div>
+<div id="theButton"></div>
+<div id="console"></div>    
+<div id="slot"></div>
     
-</div>
+    
+
 </body>
 
 
@@ -65,16 +192,43 @@
         var upHappened=0;
 
 
+        var stripePhase=0;
+        var stripeTimeout;
+
+
+        var stripeColor=[];
+        stripeColor[0]="#FF0000";
+        stripeColor[1]="#FF5555";
+        stripeColor[2]="#FFAAAA";
+        stripeColor[3]="#FFFFFF";
+
+
+var animateStripe = function(){
+    stripePhase++;
+    if (stripePhase>3){stripePhase=0}
+     $("#firstStripe").css("background-color", stripeColor[(0+stripePhase)%4] );
+     $("#secondStripe").css("background-color", stripeColor[(1+stripePhase)%4] );   
+     $("#thirdStripe").css("background-color", stripeColor[(2+stripePhase)%4] );   
+     $("#fourthStripe").css("background-color", stripeColor[(3+stripePhase)%4] );   
+};
+    
+
+
+
+
 $(document).ready(function () { //
 
-$('#wholepage').bind('touchstart', function(e){
+$('body').bind('touchstart', function(e){
+    goStripes();
     fingersDown++;
     //downHappened++;
    //$("#slot").html(downHappened + " " + upHappened);
 if (fingersDown===1){
     buttonPushed=true;
+    goStripes();
+    $("#theButton").css("background-image", 'url("button_red_down.png")');
     sendDanceStatus();    
-    $("#thebutton").css("background-color", activeColor);
+    //$("#thebutton").css("background-color", activeColor);
     $("#console").html("NOW DANCE!");
 
    if (justFullScreened===true){ //the second time you push the button it locks orientation in case you didn't get it the first time.
@@ -97,14 +251,17 @@ if (fingersDown===1){
  
 })                                      
 
-$('#wholepage').bind('touchend', function(e){
+$('body').bind('touchend', function(e){
+    stopStripe();
+
     fingersDown--;
     //upHappened++;
     //$("#slot").html(downHappened + " " + upHappened);
 if (fingersDown===0){    
     buttonPushed=false;
+    $("#theButton").css("background-image", 'url("button_red_up.png")');
     sendDanceStatus();    
-    $("#thebutton").css("background-color", inactiveColor);
+    //$("#thebutton").css("background-color", inactiveColor);
     navigator.vibrate(100);
 }
 })                                      
@@ -174,10 +331,10 @@ if (fingersDown===0){
 
 
 socket.on('command', function(data) { //incoming server instructions
-          console.log("command:");
-          console.log(data.command, data.parameter);
+          //console.log("command:");
+          //console.log(data.command, data.parameter);
           if (data.command==="disconnected"){
-            $("#console").html("WAITING YOUR TURN...");
+            $("#console").html("WAITING FOR TURN");
             $("#slot").html('');
             activeColor="white";
             inactiveColor="grey"
@@ -187,7 +344,7 @@ socket.on('command', function(data) { //incoming server instructions
             }
 
           if (data.command==="assignSlot"){
-            $("#slot").html(data.parameter+1);
+            $("#slot").html( "PLAYER " + (data.parameter+1) );
             assignedSlot=data.parameter;
             if (assignedSlot===0){
                 activeColor="#FF5555";
@@ -204,15 +361,16 @@ socket.on('command', function(data) { //incoming server instructions
                 inactiveColor='009999';
             }
 
-            $("#thebutton").css("background-color", inactiveColor);
+            //$("#thebutton").css("background-color", inactiveColor);
 
 
 
             }
 
           if (data.command==="secondsLeft"){
-            $("#console").html("START DANCING OR HOLD THE BUTTON!<BR>HURRY! " + data.parameter + " SECONDS LEFT!");
-            //navigator.vibrate(100); //add back in before production
+            $("#console").html("PUSH THE BUTTON!  " + data.parameter);
+            //$("#console").html("START DANCING OR HOLD THE BUTTON!<BR>HURRY! " + data.parameter + " SECONDS LEFT!");
+            //if (data.parameter<=10){ navigator.vibrate(100); }
             assignedSlot=data.parameter;
             }
 
@@ -228,15 +386,44 @@ socket.on('authRequest', function(data) { //failsafe in case authorization fails
           sendDeviceID();
 });
 
+
+var goStripes = function(){
+   if (danceScore>2){
+       animateStripe();
+   }else{stopStripe()}; 
+   
+   if (buttonPushed){
+    var freq = 500-(danceScore*10);
+    if (freq < 40){freq = 40;}    
+        stripeTimeout = setTimeout(function(){
+            goStripes();
+        },freq);
+   
+   console.log(freq);
+        
+   }
+
+}
+
+var stopStripe = function(){
+    clearTimeout(stripeTimeout);
+    $("#firstStripe").css("background-color", "#FFFFFF");
+    $("#secondStripe").css("background-color", "#FFFFFF");
+    $("#thirdStripe").css("background-color", "#FFFFFF");
+    $("#fourthStripe").css("background-color", "#FFFFFF");
+}    
+
 var sendDanceStatus = function(){
+    
+    
     socket.emit('danceStatus', {
         buttonPushed: buttonPushed,
         danceScore: Math.round(danceScore*100)/100, //two digit hack
     });
     
-    if (danceScore>10 && buttonPushed===true){$("#console").html("YEAH!!!! KEEP DANCING AND HOLDING THAT BUTTON!!!!");}
-    if (danceScore>10 && buttonPushed===false){$("#console").html("YEAH!!!! KEEP DANCING! HOLD THE BUTTON TO MAKE NOISE!!!!");}
-    if (danceScore<10 && buttonPushed===true){$("#console").html("NOW START DANCING TO MAKE NOISE");}
+    if (danceScore>10 && buttonPushed===true){$("#console").html("");}
+    if (danceScore>10 && buttonPushed===false){$("#console").html("PUSH THE BUTTON!");}
+    if (danceScore<10 && buttonPushed===true){$("#console").html("NOW DANCE!");}
     
     
 };
