@@ -108,7 +108,7 @@ body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; co
     <div id="header">&nbsp;</div>
     <br><br>
     
-    <div id="box1" class="roundedbox" style="position: absolute; left:5%;">PLAYER 1
+    <div id="box1" class="roundedbox" style="position: absolute; left:2.5%;">PLAYER 1
         <div class="pbcontainer">
          <div class="progressbar"><div class="colorbar" id="bar0" style="background-color: #FF5555;"></div></div>
         </div><br>
@@ -118,7 +118,7 @@ body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; co
     
     
     
-    <div id="box2" class="roundedbox" style="position: absolute; left:25%;">PLAYER 2
+    <div id="box2" class="roundedbox" style="position: absolute; left:22.5%;">PLAYER 2
     <div class="pbcontainer">
      <div class="progressbar"><div class="colorbar" id="bar1" style="background-color: #55FF55;"></div></div>
     </div>
@@ -127,7 +127,7 @@ body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; co
     </div>
     
     
-    <div id="box3" class="roundedbox" style="position: absolute; left:45%;">PLAYER 3
+    <div id="box3" class="roundedbox" style="position: absolute; left:42.5%;">PLAYER 3
     <div class="pbcontainer">
      <div class="progressbar"><div class="colorbar" id="bar2" style="background-color: #00AAAA;"></div></div>
     </div>
@@ -359,7 +359,7 @@ var vocalsLoaded=false;
         $("#titlescreen").css("display", "none");
         $("#forkme").css("display", "none");
         $("#thegame").css("display", "inline");
-    },5000 && !debugMainScreen);
+    },debugMainScreen ? 0 : 5000);
     $("#header").html("PLAYING: " + currentSong );
     titleLoop.fade(titleLoop.volume(), 0,5000, function(){titleLoop.stop();})
     
@@ -459,7 +459,7 @@ $( document ).ready(function() {
             urls: ['BitQuestLoop.ogg'],
             autoplay: true,
             loop: true,
-            volume: maxVol
+            volume: (debugMainScreen ? 0 : maxVol)
             }
         );
             },5000) //enough time to allow memory to be reclaimed? Maybe?
@@ -468,14 +468,10 @@ $( document ).ready(function() {
         $("#presents").css("display", "none");
         $("#titlescreen").css("display", "inline");
         $("#forkme").css("display", "inline");
-            },5000 && !debugMainScreen) //cancel KRC Presents and load main screen
+            },debugMainScreen ? 0 : 5000) //cancel KRC Presents and load main screen
 
-        if (debugMainScreen){
-            setTimeout(function(){loadRandomSong();},500) //enough time to allow memory to be reclaimed
-        }else{
-            setTimeout(function(){loadRandomSong();},20000) //enough time to allow memory to be reclaimed
-        }
-        
+
+        setTimeout(function(){loadRandomSong();},debugMainScreen ? 500 : 20000) //enough time to allow memory to be reclaimed
 
 
         ding = new Howl({
