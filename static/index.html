@@ -98,7 +98,7 @@ body{
   left:37%;
   
   
-  background:url("button_red_up.png") center center;
+  background:url("button_-1_up.png") center center;
   background-repeat: no-repeat;
   background-size: 100%;
   padding:0px;
@@ -151,7 +151,7 @@ font-size:5vw
 <div id="thirdStripe"></div>
 <div id="fourthStripe"></div>
 <div id="theButton"></div>
-<div id="console"></div>    
+<div id="console">WAITING FOR TURN</div>    
 <div id="slot"></div>
     
     
@@ -197,19 +197,43 @@ font-size:5vw
 
 
         var stripeColor=[];
-        stripeColor[0]="#FF0000";
-        stripeColor[1]="#FF5555";
-        stripeColor[2]="#FFAAAA";
-        stripeColor[3]="#FFFFFF";
+        stripeColor[-1]=[];
+        stripeColor[0]=[];
+        stripeColor[1]=[];
+        stripeColor[2]=[];        
+        
+        stripeColor[-1][0]="#888888";
+        stripeColor[-1][1]="#AAAAAA";
+        stripeColor[-1][2]="#CCCCCC";
+        stripeColor[-1][3]="#FFFFFF";
+
+
+        stripeColor[0][0]="#FF0000";
+        stripeColor[0][1]="#FF5555";
+        stripeColor[0][2]="#FFAAAA";
+        stripeColor[0][3]="#FFFFFF";
+
+
+        stripeColor[1][0]="#00FF00";
+        stripeColor[1][1]="#55FF55";
+        stripeColor[1][2]="#AAFFAA";
+        stripeColor[1][3]="#FFFFFF";
+
+
+        stripeColor[2][0]="#0000FF";
+        stripeColor[2][1]="#5555FF";
+        stripeColor[2][2]="#AAAAFF";
+        stripeColor[2][3]="#FFFFFF";
+
 
 
 var animateStripe = function(){
     stripePhase++;
     if (stripePhase>3){stripePhase=0}
-     $("#firstStripe").css("background-color", stripeColor[(0+stripePhase)%4] );
-     $("#secondStripe").css("background-color", stripeColor[(1+stripePhase)%4] );   
-     $("#thirdStripe").css("background-color", stripeColor[(2+stripePhase)%4] );   
-     $("#fourthStripe").css("background-color", stripeColor[(3+stripePhase)%4] );   
+     $("#firstStripe").css("background-color", stripeColor[assignedSlot][(0+stripePhase)%4] );
+     $("#secondStripe").css("background-color", stripeColor[assignedSlot][(1+stripePhase)%4] );   
+     $("#thirdStripe").css("background-color", stripeColor[assignedSlot][(2+stripePhase)%4] );   
+     $("#fourthStripe").css("background-color", stripeColor[assignedSlot][(3+stripePhase)%4] );   
 };
     
 
@@ -226,10 +250,10 @@ $('body').bind('touchstart', function(e){
 if (fingersDown===1){
     buttonPushed=true;
     goStripes();
-    $("#theButton").css("background-image", 'url("button_red_down.png")');
+    $("#theButton").css("background-image", 'url("button_'+ assignedSlot + '_down.png")');
     sendDanceStatus();    
     //$("#thebutton").css("background-color", activeColor);
-    $("#console").html("NOW DANCE!");
+    //$("#console").html("NOW DANCE!");
 
    if (justFullScreened===true){ //the second time you push the button it locks orientation in case you didn't get it the first time.
         lockOrientation();
@@ -259,7 +283,7 @@ $('body').bind('touchend', function(e){
     //$("#slot").html(downHappened + " " + upHappened);
 if (fingersDown===0){    
     buttonPushed=false;
-    $("#theButton").css("background-image", 'url("button_red_up.png")');
+    $("#theButton").css("background-image", 'url("button_' + assignedSlot + '_up.png")');
     sendDanceStatus();    
     //$("#thebutton").css("background-color", inactiveColor);
     navigator.vibrate(100);
@@ -338,32 +362,20 @@ socket.on('command', function(data) { //incoming server instructions
             $("#slot").html('');
             activeColor="white";
             inactiveColor="grey"
-            
             sendDeviceID();
             assignedSlot=-1;
+            $("#theButton").css("background-image", 'url("button_'+ assignedSlot + '_up.png")');
             }
 
           if (data.command==="assignSlot"){
             $("#slot").html( "PLAYER " + (data.parameter+1) );
             assignedSlot=data.parameter;
-            if (assignedSlot===0){
-                activeColor="#FF5555";
-                inactiveColor='#AA0000';
+            if (buttonPushed){
+                $("#theButton").css("background-image", 'url("button_'+ assignedSlot + '_down.png")');
             }
-
-            if (assignedSlot===1){
-                activeColor="#55FF55";
-                inactiveColor='00AA00';
+            else{
+                $("#theButton").css("background-image", 'url("button_'+ assignedSlot + '_up.png")');
             }
-            
-            if (assignedSlot===2){
-                activeColor="#00AAAA";
-                inactiveColor='009999';
-            }
-
-            //$("#thebutton").css("background-color", inactiveColor);
-
-
 
             }
 
@@ -371,7 +383,7 @@ socket.on('command', function(data) { //incoming server instructions
             $("#console").html("PUSH THE BUTTON!  " + data.parameter);
             //$("#console").html("START DANCING OR HOLD THE BUTTON!<BR>HURRY! " + data.parameter + " SECONDS LEFT!");
             //if (data.parameter<=10){ navigator.vibrate(100); }
-            assignedSlot=data.parameter;
+            //assignedSlot=data.parameter;
             }
 
 
@@ -399,7 +411,7 @@ var goStripes = function(){
             goStripes();
         },freq);
    
-   console.log(freq);
+   //console.log(freq);
         
    }
 
@@ -415,16 +427,17 @@ var stopStripe = function(){
 
 var sendDanceStatus = function(){
     
-    
-    socket.emit('danceStatus', {
-        buttonPushed: buttonPushed,
-        danceScore: Math.round(danceScore*100)/100, //two digit hack
-    });
-    
-    if (danceScore>10 && buttonPushed===true){$("#console").html("");}
-    if (danceScore>10 && buttonPushed===false){$("#console").html("PUSH THE BUTTON!");}
-    if (danceScore<10 && buttonPushed===true){$("#console").html("NOW DANCE!");}
-    
+    if (assignedSlot!==-1){ //don't send unless you're slotted
+        socket.emit('danceStatus', {
+            buttonPushed: buttonPushed,
+            danceScore: Math.round(danceScore*100)/100, //two digit hack
+        });
+    }
+    if (assignedSlot!==-1){
+        if (danceScore>10 && buttonPushed===true){$("#console").html("");}
+        if (danceScore>10 && buttonPushed===false){$("#console").html("PUSH THE BUTTON!");}
+        if (danceScore<10 && buttonPushed===true){$("#console").html("NOW DANCE!");}
+    }    
     
 };
 
