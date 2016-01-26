@@ -19,6 +19,19 @@ body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; co
 
 
 
+.roundedbox{
+    text-align:center; 
+    border-radius: 50px;
+    border: 5px solid #FFFFFF;
+    padding: 20px; 
+    width: 15vw;
+    height: 60vh; 
+    background-color:grey;
+}
+
+
+
+
 .centeredDiv{
   position:absolute;
   color:#fff;
@@ -46,10 +59,12 @@ body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; co
 
 
   .pbcontainer {
+    margin:auto; 
+    margin-top:1vw;
       background-color: white;
       padding: 5px;
-      height: 405px;
-      width:110px;
+      height: 40vh;
+      width:6vw;
     }
 
 
@@ -90,35 +105,34 @@ body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; co
 
 <div id="thegame">
 
-NOISEY.SPACE  &nbsp;&nbsp;&nbsp; http://ns.mod.bz
     <div id="header">&nbsp;</div>
     <br><br>
     
-    <div style="position: absolute; left:10%;">
+    <div id="box1" class="roundedbox" style="position: absolute; left:5%;">PLAYER 1
         <div class="pbcontainer">
          <div class="progressbar"><div class="colorbar" id="bar0" style="background-color: #FF5555;"></div></div>
         </div><br>
-    <span id="button0">B</span>
+
     
     </div>
     
     
     
-    <div style="position: absolute; left:35%;">
+    <div id="box2" class="roundedbox" style="position: absolute; left:25%;">PLAYER 2
     <div class="pbcontainer">
      <div class="progressbar"><div class="colorbar" id="bar1" style="background-color: #55FF55;"></div></div>
     </div>
     <br>
-    <span id="button1">B</span>
+
     </div>
     
     
-    <div style="position: absolute; left:60%;">
+    <div id="box3" class="roundedbox" style="position: absolute; left:45%;">PLAYER 3
     <div class="pbcontainer">
      <div class="progressbar"><div class="colorbar" id="bar2" style="background-color: #00AAAA;"></div></div>
     </div>
     <br>
-    <span id="button2">B</span>
+
     </div>
 
 
@@ -134,6 +148,9 @@ NOISEY.SPACE  &nbsp;&nbsp;&nbsp; http://ns.mod.bz
 </html>
 
 <script>
+var debugMainScreen=true;
+
+
 var socket = io('/display');
 var danceScore=0;
 var manifest;
@@ -200,9 +217,11 @@ setTimeout(function(){immediatelyLoadSongTracks(s,t)},200);
 
 
 var immediatelyLoadSongTracks = function(s,t){//now, actually load the files
+
 var vocalsLoaded=false;
     
-    if (manifest[s].children[t]){//make sure the entry exists.
+
+    if (manifest[s].children[t] && debugMainScreen===false){//make sure the entry exists.
      
      
      var trackToLoad=oggHTTPserver + manifest[s].children[t].path;      
@@ -235,7 +254,7 @@ var vocalsLoaded=false;
                           onload: function() {
                             loadSongTracks(s,t+1);
                           },
-                          onend: function(){location.reload();}
+                          onend: function(){location.reload(true);}
     
                           }));
                    vocalsLoaded=true;
@@ -340,7 +359,7 @@ var vocalsLoaded=false;
         $("#titlescreen").css("display", "none");
         $("#forkme").css("display", "none");
         $("#thegame").css("display", "inline");
-    },5000);
+    },5000 && !debugMainScreen);
     $("#header").html("PLAYING: " + currentSong );
     titleLoop.fade(titleLoop.volume(), 0,5000, function(){titleLoop.stop();})
     
@@ -443,16 +462,20 @@ $( document ).ready(function() {
             volume: maxVol
             }
         );
-            },5000) //enough time to allow memory to be reclaimed
+            },5000) //enough time to allow memory to be reclaimed? Maybe?
 
         setTimeout(function(){
         $("#presents").css("display", "none");
         $("#titlescreen").css("display", "inline");
         $("#forkme").css("display", "inline");
-            },5000) //cancel KRC Presents and load main screen
+            },5000 && !debugMainScreen) //cancel KRC Presents and load main screen
 
-
-        setTimeout(function(){loadRandomSong();},20000) //enough time to allow memory to be reclaimed
+        if (debugMainScreen){
+            setTimeout(function(){loadRandomSong();},500) //enough time to allow memory to be reclaimed
+        }else{
+            setTimeout(function(){loadRandomSong();},20000) //enough time to allow memory to be reclaimed
+        }
+        
 
 
         ding = new Howl({
