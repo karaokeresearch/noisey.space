@@ -133,6 +133,7 @@ body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; co
     width: 15vw;
     top:2.6vh;
     height: 62vh; 
+    color:black;
     background-color:grey;
 }
 
@@ -238,29 +239,29 @@ body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; co
     
     <div id="box1" class="roundedbox" style="left:2.5%;">PLAYER 1
         <div class="metercontainer">
-         <div class="meterbar"><div class="metercolorbar" id="bar0" style="background-color: #FF5555;"></div></div>
+         <div class="meterbar"><div class="metercolorbar" id="bar0" style="background-color: #FF0000;"></div></div>
         </div>
 
-    <div id="instrument"><img src="drums.png" style="height:100%"> </div>    
+    <div id="instrument"><img id="instrument0" src="drums.png" style="height:100%"> </div>    
     </div>
     
     
     
     <div id="box2" class="roundedbox" style="left:22.5%;">PLAYER 2
     <div class="metercontainer">
-     <div class="meterbar"><div class="metercolorbar" id="bar1" style="background-color: #55FF55;"></div></div>
+     <div class="meterbar"><div class="metercolorbar" id="bar1" style="background-color: #00FF00;"></div></div>
     </div>
 
-<div id="instrument"><img src="bass.png" style="height:100%"> </div>    
+<div id="instrument"><img id="instrument1" src="bass.png" style="height:100%"> </div>    
 
     </div>
     
     
     <div id="box3" class="roundedbox" style="left:42.5%;">PLAYER 3
     <div class="metercontainer">
-     <div class="meterbar"><div class="metercolorbar" id="bar2" style="background-color: #00AAAA;"></div></div>
+     <div class="meterbar"><div class="metercolorbar" id="bar2" style="background-color: #0000FF;"></div></div>
     </div>
-    <div id="instrument"><img src="sink.png" style="height:100%"> </div>    
+    <div id="instrument"><img id="instrument2" src="sink.png" style="height:100%"> </div>    
 
     </div>
     
@@ -274,14 +275,15 @@ body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; co
     
     <div id="songtitle">&nbsp;</div>
     
-    <div id="sidebar"><img src="ns_condensed.png" style="width:100%">
-     <div style="width:100%; margin-top:1em; color:grey">Connect to:</div>
-     <div style="width:100%; margin-top:2em"><span style="font-size:2.3em">NS.BOX.BZ</span></div>
-     <div style="width:100%; margin-top:0.75em; color:grey">or</div>
-     <div style="width:100%; margin-top:0.75em; color:white">http://nois<span style="color:#FF5555">e</span>y.space</div>
-     <div style="width:100%; margin-top:2em; color:grey">...on your mobile browser to play.</div>
-     <div style="width:100%; margin-top:3em"><span style="font-size:1.5em; color:#FF5555"" >PUSH THE BUTTON AND DANCE!</span></div>
-        </div>
+    <div id="sidebar"><img id="ns_sidebar" src="ns_condensed.png" style="width:100%">
+     <div style="position:absolute; top:30vh; width:100%; margin-top:1em; color:grey">Connect to:
+         <div style="width:100%; margin-top:2em"><span style="font-size:2.3em">NS.BOX.BZ</span></div>
+         <div style="width:100%; margin-top:0.75em; color:grey">or</div>
+         <div style="width:100%; margin-top:0.75em; color:white">http://nois<span style="color:#FF5555">e</span>y.space</div>
+         <div style="width:100%; margin-top:2em; color:grey">...on your mobile browser to play.</div>
+         <div style="width:100%; margin-top:3em"><span style="font-size:1.5em; color:#FF5555"" >PUSH THE BUTTON AND DANCE!</span></div>
+     </div>
+    </div>
 
 
 
@@ -315,6 +317,12 @@ var titleLoop;
 var startVol=0;
 var maxVol=0.75;
 var currentSong;
+
+var slot=[];
+slot[0]={};
+slot[1]={};
+slot[2]={};
+
 
 var loadRandomSong= function(){
 
@@ -513,6 +521,13 @@ var vocalsLoaded=false;
     $("#songtitle").html("PLAYING: <span style=\"color:yellow\">" + currentSong + "</span>" );
     titleLoop.fade(titleLoop.volume(), 0,5000, function(){titleLoop.stop();})
     
+    
+
+    
+    
+    
+    
+    
     play();
     }
  
@@ -562,6 +577,24 @@ var play = function() {
     setInterval(function(){ //start the progress bar moving.
     $("#progresscolor").css("width", ((vocals[0].pos()/vocals[0]._duration)*100) + "%");
     }, 1000);
+    
+    setInterval(function(){ //instrument animations if at 100%
+        
+        for (var i=0; i<3; i++){
+            if (slot[i].danceScore>15 && slot[i].buttonPushed===true){
+            $("#instrument" +i).css("height", ((Math.random()*30) + 70) + "%");
+            }
+        }
+        if (slot[0].danceScore>15 && slot[0].buttonPushed===true  &&  slot[1].danceScore>15 && slot[1].buttonPushed===true  &&  slot[2].danceScore>15 && slot[2].buttonPushed===true){
+            $("#ns_sidebar").css("width", ((Math.random()*20) + 80) + "%");
+        }            
+        
+    },250);
+
+    
+    
+    
+    
 
 };
 
@@ -676,23 +709,24 @@ socket.on('clientUpdate', function(data) { //client dancability info
 
     if (data.slot===0){
         activeColor="#FF5555";
-        inactiveColor='#770000';
+        inactiveColor='#f6c1c1';
     }
 
     if (data.slot===1){
-        activeColor="#55FF55";
-        inactiveColor='007700';
+        activeColor="#99FF99";
+        inactiveColor='bff6bf';
     }
     
     if (data.slot===2){
-        activeColor="#00AAAA";
-        inactiveColor='007777';
+        activeColor="#588fff";
+        inactiveColor='bff6f6';
     }
     
     if (data.buttonPushed){
-        $( "#button"+data.slot).css("background-color", activeColor);
+        
+        $( "#box"+(data.slot+1)).css("background-color", activeColor);
     }else{
-        $( "#button"+data.slot).css("background-color", inactiveColor);
+        $( "#box"+(data.slot+1)).css("background-color", inactiveColor);
     }
 
 
@@ -706,6 +740,10 @@ socket.on('clientUpdate', function(data) { //client dancability info
         }else{
             setTrackVol(data.slot,0)            
         }   
+     
+     slot[data.slot].danceScore=data.danceScore;
+     slot[data.slot].buttonPushed=data.buttonPushed;
+    
         
     }
     
