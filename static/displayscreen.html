@@ -21,14 +21,14 @@ body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; co
 #instrument{
       height: 11.55vh;
       margin:auto; 
-      margin-top:0.5vh;
+      margin-top:2vh;
 } 
 
 
 #songtitle{
     position:absolute;
     top:94vh;
-    left:1.5vw;
+    left:2.5vw;
 }
 
 
@@ -40,12 +40,12 @@ body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; co
     background-color:grey;
     padding: 0px;
     top:87vh;
-    left:1.5vw;
+    left:2.5vw;
 }
 
    #progresscolor{
        background-color:#FF5555;
-       width: 50%;
+       width: 0%;
        height: 100%;
        padding:0px;
        position: relative;
@@ -142,6 +142,21 @@ body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; co
 }
 
 
+#sidebar{
+    position: fixed; 
+    text-align:center; 
+    border-radius: 2em;
+    border: 0.2em solid #FFFFFF;
+    padding: 0.8em; 
+    width: 32vw;
+    height:83.5vh;
+    left:63.2vw; 
+    top:2.6vh; 
+    background-color:#000000;
+}
+
+
+
 
 
  
@@ -195,15 +210,25 @@ body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; co
 
     </div>
     
-    <div id="console1" class="console" style="left:2.5%;">VISIT URL TO PLAY!</div>
-    <div id="console2" class="console" style="left:22.5%;">VISIT URL TO PLAY!</div>
-    <div id="console3" class="console" style="left:42.5%;">VISIT URL TO PLAY!</div>
+    <div id="console1" class="console" style="left:2.5%;">VISIT URL TO JOIN!</div>
+    <div id="console2" class="console" style="left:22.5%;">VISIT URL TO JOIN!</div>
+    <div id="console3" class="console" style="left:42.5%;">VISIT URL TO JOIN!</div>
     
     
     <div id="songprogress"><div id="progresscolor"></div></div>
     
     
     <div id="songtitle">&nbsp;</div>
+    
+    <div id="sidebar"><img src="ns_condensed.png" style="width:100%">
+     <div style="width:100%; margin-top:1em; color:grey">Connect to:</div>
+     <div style="width:100%; margin-top:2em"><span style="font-size:2.3em">NS.BOX.BZ</span></div>
+     <div style="width:100%; margin-top:0.75em; color:grey">or</div>
+     <div style="width:100%; margin-top:0.75em; color:white">http://nois<span style="color:#FF5555">e</span>y.space</div>
+     <div style="width:100%; margin-top:2em; color:grey">...on your mobile browser to play.</div>
+     <div style="width:100%; margin-top:3em"><span style="font-size:1.5em; color:#FF5555"" >PUSH THE BUTTON AND DANCE!</span></div>
+        </div>
+
 
 
 </div>
@@ -218,7 +243,7 @@ body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; co
 </html>
 
 <script>
-var debugMainScreen=true;
+var debugMainScreen=false;  //change this to true if you need to work on the main title screen.
 
 
 var socket = io('/display');
@@ -429,7 +454,7 @@ var vocalsLoaded=false;
         $("#titlescreen").css("display", "none");
         $("#forkme").css("display", "none");
         $("#thegame").css("display", "inline");
-    },debugMainScreen ? 0 : 5000);
+    },debugMainScreen ? 0 : 2500);
     $("#songtitle").html("PLAYING: " + currentSong );
     titleLoop.fade(titleLoop.volume(), 0,5000, function(){titleLoop.stop();})
     
@@ -439,30 +464,26 @@ var vocalsLoaded=false;
 }  //end load songs function
 
 
-function setTrackVol(instrument,vol){
-if (instrument===0){
-    drums.forEach(function(whichTrack){
-       //console.log(whichTrack);
-       whichTrack.volume(vol);
-    });
-}
-
-if (instrument===1){
-    bass.forEach(function(whichTrack){
-       whichTrack.volume(vol);
-    });
-}
-
-if (instrument===2){
-    sink.forEach(function(whichTrack){
-       whichTrack.volume(vol);
-    });
-}
-
-
-
-
-
+var setTrackVol = function(instrument,vol){
+    if (instrument===0){
+        drums.forEach(function(whichTrack){
+           //console.log(whichTrack);
+           whichTrack.volume(vol);
+        });
+    }
+    
+    if (instrument===1){
+        bass.forEach(function(whichTrack){
+           whichTrack.volume(vol);
+        });
+    }
+    
+    if (instrument===2){
+        sink.forEach(function(whichTrack){
+           whichTrack.volume(vol);
+        });
+    }
+    
 }
 
 
@@ -482,6 +503,11 @@ var play = function() {
     sink.forEach(function(whichTrack){
        whichTrack.play();
     });
+
+    setInterval(function(){ //start the progress bar moving.
+    $("#progresscolor").css("width", ((vocals[0].pos()/vocals[0]._duration)*100) + "%");
+    }, 1000);
+
 };
 
 
@@ -532,16 +558,16 @@ $( document ).ready(function() {
             volume: (debugMainScreen ? 0 : maxVol)
             }
         );
-            },5000) //enough time to allow memory to be reclaimed? Maybe?
+            },3500) //enough time to allow memory to be reclaimed? Maybe?
 
         setTimeout(function(){
         $("#presents").css("display", "none");
         $("#titlescreen").css("display", "inline");
         $("#forkme").css("display", "inline");
-            },debugMainScreen ? 0 : 5000) //cancel KRC Presents and load main screen
+            },debugMainScreen ? 0 : 3500) //cancel KRC Presents and load main screen
 
 
-        setTimeout(function(){loadRandomSong();},debugMainScreen ? 500 : 20000) //enough time to allow memory to be reclaimed
+        setTimeout(function(){loadRandomSong();},debugMainScreen ? 500 : 15000) //enough time to allow memory to be reclaimed
 
 
         ding = new Howl({
