@@ -31,6 +31,44 @@ body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; co
     left:2.5vw;
 }
 
+#titlescreen{
+    position:absolute;
+    left:10vw;
+    top:5vh;
+    width:80vw;
+    border:0px;
+    padding:0px;
+    display:none;
+    text-align: center;
+    }
+
+
+#titleinstructions{
+    position:absolute;
+    bottom:5vh;
+    left:10vw;
+    width:80vw;
+    border:0px;
+    padding:0px;
+    text-align: center;
+    display:none;
+}
+
+
+#story{
+    position:absolute;
+    left:10vw;
+    top:5vh;
+    width:80vw;
+    border:0px;
+    padding:0px;
+    display:none;
+    text-align: center;
+
+    }
+
+
+
 
 #songprogress{
     position:absolute;
@@ -80,9 +118,8 @@ body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; co
     display:none
     }
 
-#titlescreen{
-    display:none
-    }
+
+
 
 
 
@@ -146,7 +183,7 @@ body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; co
     position: fixed; 
     text-align:center; 
     border-radius: 2em;
-    border: 0.2em solid #FFFFFF;
+    border: 0.2em solid #000000;
     padding: 0.8em; 
     width: 32vw;
     height:83.5vh;
@@ -169,12 +206,29 @@ body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; co
 
 <div id="presents" class="centeredDiv">Karaoke Research Council Presents</div>
 
-<img id="forkme" style="display:none; position: fixed; top: 0; right: 0; border: 0;" src="ForkMeOnGithub.png" >
-<div id="titlescreen" class="centeredDiv">Karaoke Research Council Presents<br><br><br><br><img src="ns_logo.png" style="width:35%"><br><br><br><br><br><br><br><br><br><span style="color:grey;">connect to</span><br><br><br><span style="font-size:2vw">HTTP://NS.MOD.BZ </span><br><br><span style="color:grey;"><br>on your mobile browser to play. <br><br></span>
-<div id="loadupdates">&nbsp;</div>
-    </div>
+<img id="forkme" style="display:none; position: fixed; top: 0; right: 0; border: 0;" src="ForkMeOnGithub.png">
+
+<div id="titlescreen">Karaoke Research Council Presents<br><br><br><br><br><br><br><img src="ns_logo.png" style="width:45%">
+</div>
+
+<div id="titleinstructions">
+    <span style="color:grey;">connect to</span><br><br><br><span style="font-size:2vw">HTTP://NS.MOD.BZ </span><br><br><span style="color:grey;"><br>on your mobile browser to play. <br><br></span>
+    <div id="loadupdates">&nbsp;</div>
+</div>
 
 
+<div id="story">    
+    
+    <img src="ns_logo.png" style="width:15%"><br><br>
+    
+    <div style="margin-top:2em">The band wants to play, but nobody's dancing!</div>
+    <br>
+    Can you help them?
+    <br><br><br>
+    <img src="theband.png">
+    <br>
+
+</div>
 
 
 <div id="thegame">
@@ -283,7 +337,7 @@ var loadRandomSong= function(){
  console.log("Found:   " + manifest[s].name);
  
  currentSong=manifest[s].name;
- $("#loadupdates").html("LOADING: " + currentSong);
+ $("#loadupdates").html("LOADING: <span style=\"color:yellow\">" + currentSong + "</span>");
  
 
   for (t in manifest[s].children){  //once through to see if "vocal" and "song" are different.
@@ -448,14 +502,15 @@ var vocalsLoaded=false;
      
  }else{
     
-    console.log("All Tracks loaded. Playing.");
+    console.log("All Tracks loaded. Playing."); //begin the game!
     
     setTimeout(function(){
-        $("#titlescreen").css("display", "none");
-        $("#forkme").css("display", "none");
+        $("#story").css("display", "none");
         $("#thegame").css("display", "inline");
+        $("#titleinstructions").css("display", "none");
+        $("#story").css("display", "none");
     },debugMainScreen ? 0 : 2500);
-    $("#songtitle").html("PLAYING: " + currentSong );
+    $("#songtitle").html("PLAYING: <span style=\"color:yellow\">" + currentSong + "</span>" );
     titleLoop.fade(titleLoop.volume(), 0,5000, function(){titleLoop.stop();})
     
     play();
@@ -551,23 +606,36 @@ $( document ).ready(function() {
         console.log(manifest.length + " songs available");
         
         setTimeout(function(){
-        titleLoop = new Howl({
-            urls: ['BitQuestLoop.ogg'],
-            autoplay: true,
-            loop: true,
-            volume: (debugMainScreen ? 0 : maxVol)
-            }
-        );
-            },3500) //enough time to allow memory to be reclaimed? Maybe?
+            titleLoop = new Howl({
+                urls: ['BitQuestLoop.ogg'],
+                autoplay: true,
+                loop: true,
+                volume: (debugMainScreen ? 0 : maxVol)
+                }
+            );
+        },2500) //enough time to allow memory to be reclaimed? Maybe?
 
         setTimeout(function(){
         $("#presents").css("display", "none");
         $("#titlescreen").css("display", "inline");
+        $("#titleinstructions").css("display", "inline");
         $("#forkme").css("display", "inline");
-            },debugMainScreen ? 0 : 3500) //cancel KRC Presents and load main screen
+            },debugMainScreen ? 0 : 2500) //cancel KRC Presents and load title screen
 
+        setTimeout(function(){
+        $("#titlescreen").css("display", "none");
+        $("#forkme").css("display", "none");
+        
+            },debugMainScreen ? 500 : 9500) //disappear title screen
 
-        setTimeout(function(){loadRandomSong();},debugMainScreen ? 500 : 15000) //enough time to allow memory to be reclaimed
+        setTimeout(function(){
+        $("#story").css("display", "inline");        
+            },debugMainScreen ? 500 : 10500) //appear story screen 1 sec later
+            
+        
+
+            
+        setTimeout(function(){loadRandomSong();},debugMainScreen ? 500 : 18000) //enough time to allow memory to be reclaimed?
 
 
         ding = new Howl({
