@@ -18,16 +18,46 @@
 body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; color:#FFFFFF}
 
 
+#instrument{
+      height: 11.55vh;
+      margin:auto; 
+      margin-top:0.5vh;
+} 
 
-.roundedbox{
-    text-align:center; 
-    border-radius: 50px;
-    border: 5px solid #FFFFFF;
-    padding: 20px; 
-    width: 15vw;
-    height: 60vh; 
-    background-color:grey;
+
+#songtitle{
+    position:absolute;
+    top:94vh;
+    left:1.5vw;
 }
+
+
+#songprogress{
+    position:absolute;
+    width:57.5vw;
+    height:3.5vh;
+    border: 0.2em solid #FFFFFF;
+    background-color:grey;
+    padding: 0px;
+    top:87vh;
+    left:1.5vw;
+}
+
+   #progresscolor{
+       background-color:#FF5555;
+       width: 50%;
+       height: 100%;
+       padding:0px;
+       position: relative;
+       left: 0%;
+
+    }
+
+
+
+
+
+
 
 
 
@@ -39,7 +69,7 @@ body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; co
   top:50%;
   left:50%;
   /*background-color:red; */
-  padding:15px;
+  padding:0.6em;
   transform: translate(-50%,-50%);
    text-align: center;
 } 
@@ -57,25 +87,39 @@ body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; co
 
 
 
+.roundedbox{
+    position: absolute; 
+    text-align:center; 
+    border-radius: 2em;
+    border: 0.2em solid #FFFFFF;
+    padding:0.8em; 
+    width: 15vw;
+    top:2.6vh;
+    height: 62vh; 
+    background-color:grey;
+}
 
-  .pbcontainer {
+
+
+
+  .metercontainer {
     margin:auto; 
-    margin-top:1vw;
+    margin-top:2.6vh;
       background-color: white;
-      padding: 5px;
-      height: 40vh;
+      padding: 0.2em;
+      height: 42vh;
       width:6vw;
     }
 
 
-  .progressbar {
+  .meterbar {
       background-color: black;
       padding: 0px;
       height: 100%;
       width:100%;
     }
     
-   .colorbar{
+   .metercolorbar{
         width: 100%;
        height: 0%;
        padding:0px;
@@ -83,6 +127,21 @@ body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; co
        top: 100%;
 
     }
+
+
+.console{
+    position: absolute; 
+    text-align:center; 
+    border-radius: 2em;
+    border: 0.2em solid #FFFFFF;
+    padding: 0.8em; 
+    width: 15vw;
+    height: 5.3vh;
+    top:73vh; 
+    background-color:grey;
+}
+
+
 
 
  
@@ -105,35 +164,46 @@ body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; co
 
 <div id="thegame">
 
-    <div id="header">&nbsp;</div>
-    <br><br>
-    
-    <div id="box1" class="roundedbox" style="position: absolute; left:2.5%;">PLAYER 1
-        <div class="pbcontainer">
-         <div class="progressbar"><div class="colorbar" id="bar0" style="background-color: #FF5555;"></div></div>
-        </div><br>
+
 
     
+    <div id="box1" class="roundedbox" style="left:2.5%;">PLAYER 1
+        <div class="metercontainer">
+         <div class="meterbar"><div class="metercolorbar" id="bar0" style="background-color: #FF5555;"></div></div>
+        </div>
+
+    <div id="instrument"><img src="drums.png" style="height:100%"> </div>    
     </div>
     
     
     
-    <div id="box2" class="roundedbox" style="position: absolute; left:22.5%;">PLAYER 2
-    <div class="pbcontainer">
-     <div class="progressbar"><div class="colorbar" id="bar1" style="background-color: #55FF55;"></div></div>
+    <div id="box2" class="roundedbox" style="left:22.5%;">PLAYER 2
+    <div class="metercontainer">
+     <div class="meterbar"><div class="metercolorbar" id="bar1" style="background-color: #55FF55;"></div></div>
     </div>
-    <br>
+
+<div id="instrument"><img src="bass.png" style="height:100%"> </div>    
 
     </div>
     
     
-    <div id="box3" class="roundedbox" style="position: absolute; left:42.5%;">PLAYER 3
-    <div class="pbcontainer">
-     <div class="progressbar"><div class="colorbar" id="bar2" style="background-color: #00AAAA;"></div></div>
+    <div id="box3" class="roundedbox" style="left:42.5%;">PLAYER 3
+    <div class="metercontainer">
+     <div class="meterbar"><div class="metercolorbar" id="bar2" style="background-color: #00AAAA;"></div></div>
     </div>
-    <br>
+    <div id="instrument"><img src="sink.png" style="height:100%"> </div>    
 
     </div>
+    
+    <div id="console1" class="console" style="left:2.5%;">VISIT URL TO PLAY!</div>
+    <div id="console2" class="console" style="left:22.5%;">VISIT URL TO PLAY!</div>
+    <div id="console3" class="console" style="left:42.5%;">VISIT URL TO PLAY!</div>
+    
+    
+    <div id="songprogress"><div id="progresscolor"></div></div>
+    
+    
+    <div id="songtitle">&nbsp;</div>
 
 
 </div>
@@ -360,7 +430,7 @@ var vocalsLoaded=false;
         $("#forkme").css("display", "none");
         $("#thegame").css("display", "inline");
     },debugMainScreen ? 0 : 5000);
-    $("#header").html("PLAYING: " + currentSong );
+    $("#songtitle").html("PLAYING: " + currentSong );
     titleLoop.fade(titleLoop.volume(), 0,5000, function(){titleLoop.stop();})
     
     play();
