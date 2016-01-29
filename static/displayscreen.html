@@ -17,11 +17,23 @@
 
 body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; color:#FFFFFF}
 
+.noiselines{
+width: 3vw;
+visibility: hidden;
+}
 
-#instrument{
-      height: 11.55vh;
-      margin:auto; 
-      margin-top:2vh;
+.instrumentwrapper{
+    display: table; 
+    height: 14vh;
+    text-align:center;
+    margin:auto;
+}
+
+.instrument{
+
+     vertical-align: middle;
+     display: table-cell;
+     margin:auto;
 } 
 
 
@@ -239,30 +251,26 @@ body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; co
     
     <div id="box1" class="roundedbox" style="left:2.5%;">PLAYER 1
         <div class="metercontainer">
-         <div class="meterbar"><div class="metercolorbar" id="bar0" style="background-color: #FF0000;"></div></div>
+            <div class="meterbar"><div class="metercolorbar" id="bar0" style="background-color: #FF0000;"></div></div>
         </div>
-
-    <div id="instrument"><img id="instrument0" src="drums.png" style="height:100%"> </div>    
+           <div class="instrumentwrapper"><div class="instrument"><span style="float:left; width:3vw"><img id="noise1left" src="blacknoiselinesleft.gif" class="noiselines"></span><span style="float:left"><img id="instrument1" src="drums.png" style="width:8vw"></span><span style="float:left; width:3vw"><img id="noise1right" src="blacknoiselinesright.gif" class="noiselines"></span> </div></div>
     </div>
     
     
     
     <div id="box2" class="roundedbox" style="left:22.5%;">PLAYER 2
-    <div class="metercontainer">
-     <div class="meterbar"><div class="metercolorbar" id="bar1" style="background-color: #00FF00;"></div></div>
-    </div>
-
-<div id="instrument"><img id="instrument1" src="bass.png" style="height:100%"> </div>    
-
+        <div class="metercontainer">
+            <div class="meterbar"><div class="metercolorbar" id="bar1" style="background-color: #00FF00;"></div></div>
+        </div>
+        <div class="instrumentwrapper"><div class="instrument"><span style="float:left; width:3vw"><img id="noise2left" src="blacknoiselinesleft.gif" class="noiselines"></span><span style="float:left"><img id="instrument2" src="bass.png" style="width:6vw"></span><span style="float:left; width:3vw"><img id="noise2right" src="blacknoiselinesright.gif" class="noiselines"></span> </div></div>
     </div>
     
     
     <div id="box3" class="roundedbox" style="left:42.5%;">PLAYER 3
-    <div class="metercontainer">
-     <div class="meterbar"><div class="metercolorbar" id="bar2" style="background-color: #0000FF;"></div></div>
-    </div>
-    <div id="instrument"><img id="instrument2" src="sink.png" style="height:100%"> </div>    
-
+        <div class="metercontainer">
+            <div class="meterbar"><div class="metercolorbar" id="bar2" style="background-color: #0000FF;"></div></div>
+        </div>
+        <div class="instrumentwrapper"><div class="instrument"><span style="float:left; width:3vw"><img id="noise3left" src="blacknoiselinesleft.gif" class="noiselines"></span><span style="float:left"><img id="instrument3" src="sink.png" style="width:8vw"></span><span style="float:left; width:3vw"><img id="noise3right" src="blacknoiselinesright.gif" class="noiselines"></span> </div></div>
     </div>
     
     <div id="console1" class="console" style="left:2.5%;">VISIT URL TO JOIN!</div>
@@ -281,7 +289,7 @@ body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; co
          <div style="width:100%; margin-top:0.75em; color:grey">or</div>
          <div style="width:100%; margin-top:0.75em; color:white">http://nois<span style="color:#FF5555">e</span>y.space</div>
          <div style="width:100%; margin-top:2em; color:grey">...on your mobile browser to play.</div>
-         <div style="width:100%; margin-top:3em"><span style="font-size:1.5em; color:#FF5555"" >PUSH THE BUTTON AND DANCE!</span></div>
+         <div style="width:100%; margin-top:3em"><span style="font-size:1.5em; color:#FF5555">PUSH THE BUTTON AND DANCE!</span></div>
      </div>
     </div>
 
@@ -299,7 +307,7 @@ body{background-color:#000000; font-family:"Press Start 2P"; font-size:1.5vw; co
 </html>
 
 <script>
-var debugMainScreen=false;  //change this to true if you need to work on the main title screen.
+var debugMainScreen=true;  //change this to true if you need to work on the main title screen.
 
 
 var socket = io('/display');
@@ -582,7 +590,9 @@ var play = function() {
         
         for (var i=0; i<3; i++){
             if (slot[i].danceScore>15 && slot[i].buttonPushed===true){
-            $("#instrument" +i).css("height", ((Math.random()*30) + 70) + "%");
+            $("#noise" + i+1 + "right").css("visibility", "visible");
+            $("#noise" + i+1 + "left").css("visibility", "visible");
+            //$("#instrument" +i).css("height", ((Math.random()*30) + 70) + "%");
             }
         }
         if (slot[0].danceScore>15 && slot[0].buttonPushed===true  &&  slot[1].danceScore>15 && slot[1].buttonPushed===true  &&  slot[2].danceScore>15 && slot[2].buttonPushed===true){
