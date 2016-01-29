@@ -294,7 +294,34 @@ visibility: hidden;
     </div>
 
 
+</div>
 
+<div id="credits" style="display:none; margin:0px; position:absolute; width:95vw; text-align:center;">CREDITS<br><br><br><br><img src="ns_logo.png" style="width:15%"><br><br>
+<br><br>
+&copy;2016 Ross Brackett
+<br><br>A product of the Karaoke Research Council
+<br><br><br>
+<div style="font-size:0.5em">
+<br><br>Fork me at: github.com/karaokeresearch/noisey.space
+<br><br><br><br>This software is distributed under the GPL v3.0 license
+<br>Full text: http://www.gnu.org/licenses/gpl-3.0.txt
+<br>
+<br><br><br>Additional audio assets utilized by this project:
+<br>
+<br>"cf_FX_batch_jingle_glock_N--kloing.aif" by cfork 
+<br>(referenced in this project as ding.ogg)
+<br>https://www.freesound.org/people/cfork/sounds/26875/
+<br>Licensed under Creative Commons: By Attribution 3.0 License
+<br>http://creativecommons.org/licenses/by/3.0/
+<br><br>
+<br>"Bit Quest" Kevin MacLeod (incompetech.com)
+<br>Licensed under Creative Commons: By Attribution 3.0 License
+<br>http://creativecommons.org/licenses/by/3.0/
+<br><br><br>A complete list of software utilized by this project
+<br>and their respetive licenses is present in the licenses 
+<br>directory of this project.
+</div>
+<br><br>THE END
 </div>
 
 
@@ -307,7 +334,7 @@ visibility: hidden;
 </html>
 
 <script>
-var debugMainScreen=true;  //change this to true if you need to work on the main title screen.
+var debugMainScreen=false;  //change this to true if you need to work on the main title screen.
 
 
 var socket = io('/display');
@@ -325,6 +352,7 @@ var titleLoop;
 var startVol=0;
 var maxVol=0.75;
 var currentSong;
+var nsLogoBig; //animation in case you achieve noisey.space
 
 var slot=[];
 slot[0]={};
@@ -419,7 +447,7 @@ var vocalsLoaded=false;
                           onload: function() {
                             loadSongTracks(s,t+1);
                           },
-                          onend: function(){location.reload(true);}
+                          onend: rollCredits
     
                           }));
                    vocalsLoaded=true;
@@ -465,7 +493,7 @@ var vocalsLoaded=false;
                           onload: function() {
                             loadSongTracks(s,t+1);
                           },
-                          onend: function(){location.reload();}
+                          onend:rollCredits
     
                           }));
                           vocalsLoaded=true;
@@ -566,6 +594,16 @@ var setTrackVol = function(instrument,vol){
 
 
 
+var rollCredits = function(){
+$("#thegame").css("display", "none");
+$("#credits").css("display", "inline");
+    setTimeout(function(){
+        location.reload(true);
+        },3000)
+};    
+
+
+
 
 
 var play = function() {
@@ -590,13 +628,26 @@ var play = function() {
         
         for (var i=0; i<3; i++){
             if (slot[i].danceScore>15 && slot[i].buttonPushed===true){
-            $("#noise" + i+1 + "right").css("visibility", "visible");
-            $("#noise" + i+1 + "left").css("visibility", "visible");
-            //$("#instrument" +i).css("height", ((Math.random()*30) + 70) + "%");
+            $("#noise" + (i+1) + "right").css("visibility", "visible");
+            $("#noise" + (i+1) + "left").css("visibility", "visible");
+            }
+            else{
+            $("#noise" + (i+1) + "right").css("visibility", "hidden");
+            $("#noise" + (i+1) + "left").css("visibility", "hidden");
             }
         }
+            
         if (slot[0].danceScore>15 && slot[0].buttonPushed===true  &&  slot[1].danceScore>15 && slot[1].buttonPushed===true  &&  slot[2].danceScore>15 && slot[2].buttonPushed===true){
-            $("#ns_sidebar").css("width", ((Math.random()*20) + 80) + "%");
+
+            if (nsLogoBig===true){
+                $("#ns_sidebar").css("width", "80%");
+                nsLogoBig=false;
+            }else{
+                $("#ns_sidebar").css("width", "100%");
+                nsLogoBig=true;
+            }
+
+            
         }            
         
     },250);
