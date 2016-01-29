@@ -1,11 +1,18 @@
- <script type="text/javascript" src="jquery-2.1.4.js"></script>
- <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-     <script type="text/javascript" src="howler.js"></script>
  <!DOCTYPE html>
 <html>
 
+<head><title>NOISEY.SPACE</title>
+</head>
 
+
+ <script type="text/javascript" src="jquery-2.1.4.js"></script>
+ <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+ <script type="text/javascript" src="howler.js"></script>
+
+
+    
 <style>
+
 
 
 @font-face {
@@ -146,7 +153,7 @@ visibility: hidden;
     top:2.6vh;
     height: 62vh; 
     color:black;
-    background-color:grey;
+    background-color:#444444;
 }
 
 
@@ -188,7 +195,7 @@ visibility: hidden;
     width: 15vw;
     height: 5.3vh;
     top:73vh; 
-    background-color:grey;
+    background-color:#444444;
 }
 
 
@@ -334,7 +341,7 @@ visibility: hidden;
 </html>
 
 <script>
-var debugMainScreen=false;  //change this to true if you need to work on the main title screen.
+var debugMainScreen=true;  //change this to true if you need to work on the main title screen.
 
 
 var socket = io('/display');
@@ -663,31 +670,8 @@ var play = function() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 $( document ).ready(function() {
     console.log( "ready!" );
-
-
-
-
-
-
-
-
 
 
     $.ajax({
@@ -726,11 +710,8 @@ $( document ).ready(function() {
         $("#story").css("display", "inline");        
             },debugMainScreen ? 500 : 10500) //appear story screen 1 sec later
             
-        
-
             
         setTimeout(function(){loadRandomSong();},debugMainScreen ? 500 : 18000) //enough time to allow memory to be reclaimed?
-
 
         ding = new Howl({
             urls: ['ding.ogg'],
@@ -739,13 +720,6 @@ $( document ).ready(function() {
             volume: maxVol
             }
         );
-
-        
-
-
-
-
-
         
         
       },
@@ -770,17 +744,17 @@ socket.on('clientUpdate', function(data) { //client dancability info
 
     if (data.slot===0){
         activeColor="#FF5555";
-        inactiveColor='#f6c1c1';
+        inactiveColor='#CCCCCC';
     }
 
     if (data.slot===1){
         activeColor="#99FF99";
-        inactiveColor='bff6bf';
+        inactiveColor='#CCCCCC';
     }
     
     if (data.slot===2){
         activeColor="#588fff";
-        inactiveColor='bff6f6';
+        inactiveColor='#CCCCCC';
     }
     
     if (data.buttonPushed){
