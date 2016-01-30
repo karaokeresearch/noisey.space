@@ -90,20 +90,39 @@ body{
 
 
 
-#theButton{
+#theButtonUp{
   position:absolute;
   width:25%;
   height:25%;
   top:37%;
   left:37%;
-  
-  
   background:url("button_-1_up.png") center center;
   background-repeat: no-repeat;
   background-size: 100%;
   padding:0px;
-
+  display:inline;
 } 
+
+
+#theButtonDown{
+  position:absolute;
+  width:25%;
+  height:25%;
+  top:37%;
+  left:37%;
+  background:url("button_-1_down.png") center center;
+  background-repeat: no-repeat;
+  background-size: 100%;
+  padding:0px;
+  display:none;
+} 
+
+
+
+
+
+
+
 
 
 #slot{
@@ -139,18 +158,12 @@ font-size:5vw
 
 <body bgcolor="#000000" style="touch-action: none;">
 
-<!--
-    <div style="position: absolute; left: 0px; top: 0px; background-color:#222222; color: white; font-family:Sans; font-size:6vw; height:10vw; width:10vw;" id="slot"></div>
-    <div style="position: absolute; right: 25vw; top: 25vw; background-color:grey; height:50vw; width:50vw;" id="thebutton"></div>
-    <div style="position: absolute; right: 0px; top: 100vw; background-color:black; color: white; font-family:Sans; height:50vw; width:100vw;" id="console"></div>                                                                                                                                   
-
-    -->
 
 <div id="firstStripe"></div>
 <div id="secondStripe"></div>
 <div id="thirdStripe"></div>
 <div id="fourthStripe"></div>
-<div id="theButton"></div>
+<div id="theButtonUp"></div><div id="theButtonDown"></div>
 <div id="console">WAITING FOR TURN</div>    
 <div id="slot"></div>
     
@@ -236,6 +249,17 @@ var animateStripe = function(){
      $("#fourthStripe").css("background-color", stripeColor[assignedSlot][(3+stripePhase)%4] );   
 };
     
+var buttonUp = function(){
+    $("#theButtonDown").css("display", "none");
+    $("#theButtonUp").css("display", "inline");
+}
+    
+var buttonDown = function(){
+    $("#theButtonUp").css("display", "none");
+    $("#theButtonDown").css("display", "inline");
+}
+
+
 
 
 
@@ -251,7 +275,7 @@ if (fingersDown===1){
     console.log("fingersdown equals one");
     buttonPushed=true;
     goStripes();
-    $("#theButton").css("background-image", 'url("button_'+ assignedSlot + '_down.png")');
+    buttonDown();
     sendDanceStatus();    
     //$("#thebutton").css("background-color", activeColor);
     //$("#console").html("NOW DANCE!");
@@ -283,7 +307,7 @@ $('body').bind('touchend', function(e){
 if (fingersDown===0){    
     buttonPushed=false;
     danceScore=0;
-    $("#theButton").css("background-image", 'url("button_' + assignedSlot + '_up.png")');
+    buttonUp();
     sendDanceStatus();    
     navigator.vibrate(100);
 }
@@ -363,7 +387,7 @@ setInterval(function(){
             console.log("unlocking");
             fingersDown=0;
             buttonPushed=false;
-            $("#theButton").css("background-image", 'url("button_' + assignedSlot + '_up.png")');
+            buttonUp();
             navigator.vibrate(100);
 	        setTimeout(function(){sendDeviceID();},2000); //failsafe in case socket.io isn't up and running immediately upon phone restore
 	    }
@@ -387,19 +411,23 @@ socket.on('command', function(data) { //incoming server instructions
             inactiveColor="grey"
             setTimeout(function(){sendDeviceID();},1000) //re-register, but give it a second.
             assignedSlot=-1;
-            $("#theButton").css("background-image", 'url("button_'+ assignedSlot + '_up.png")');
+            $("#theButtonUp").css("background-image", 'url("button_' + assignedSlot + '_up.png")');
+            $("#theButtonDown").css("background-image", 'url("button_' + assignedSlot + '_down.png")');
             }
 
           if (data.command==="assignSlot"){
             $("#slot").html( "PLAYER " + (data.parameter+1) );
             assignedSlot=data.parameter;
-            console.log("buttonpushed",buttonPushed, "fingersdown", fingersDown);
-            if (buttonPushed){
-                $("#theButton").css("background-image", 'url("button_'+ assignedSlot + '_down.png")');
-            }
-            else{
-                $("#theButton").css("background-image", 'url("button_'+ assignedSlot + '_up.png")');
-            }
+            $("#theButtonUp").css("background-image", 'url("button_' + assignedSlot + '_up.png")');
+            $("#theButtonDown").css("background-image", 'url("button_' + assignedSlot + '_down.png")');
+
+          //  console.log("buttonpushed",buttonPushed, "fingersdown", fingersDown);
+          //  if (buttonPushed){
+          //      $("#theButton").css("background-image", 'url("button_'+ assignedSlot + '_down.png")');
+          //  }
+          //  else{
+          //      $("#theButton").css("background-image", 'url("button_'+ assignedSlot + '_up.png")');
+          //  }
 
             }
 
