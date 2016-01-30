@@ -433,7 +433,12 @@ socket.on('command', function(data) { //incoming server instructions
             }
 
           if (data.command==="secondsLeft"){
-            $("#console").html("PUSH THE BUTTON!  " + data.parameter);
+            if (buttonPushed){
+                $("#console").html("NOW DANCE!  " + data.parameter);
+            }
+            else{
+                $("#console").html("PUSH THE BUTTON!  " + data.parameter);
+            }
             //$("#console").html("START DANCING OR HOLD THE BUTTON!<BR>HURRY! " + data.parameter + " SECONDS LEFT!");
             //if (data.parameter<=10){ navigator.vibrate(100); }
             //assignedSlot=data.parameter;
@@ -491,8 +496,8 @@ var sendDanceStatus = function(){
     }
     if (assignedSlot!==-1){
         if (danceScore>10 && buttonPushed===true){$("#console").html("");}
-        if (danceScore>10 && buttonPushed===false){$("#console").html("PUSH THE BUTTON!");}
-        if (danceScore<10 && buttonPushed===true){$("#console").html("NOW DANCE!");}
+        //if (danceScore>10 && buttonPushed===false){$("#console").html("PUSH THE BUTTON!");}
+        //if (danceScore<10 && buttonPushed===true){$("#console").html("NOW DANCE!");}
     }    
     
 };

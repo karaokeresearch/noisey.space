@@ -73,7 +73,7 @@ client.on('connection', function(socket){
                             data.slot=i;
                             display.emit('clientDance', data);
   
-                              if (data.danceScore >10 || data.buttonPushed===true){ //every time the user is not violating the rules, reset their lease
+                              if (data.danceScore >10 && data.buttonPushed===true){ //every time the user is not violating the rules, reset their lease
                                   slot[i].lastGoodDance=Date.now();
                               }                                                    
                         };
@@ -212,16 +212,8 @@ setInterval(function(){  //queue that runs every second to check on user activit
                     console.log("deleting.");
                     var devid = slot[i].deviceID;
 
-                  //console.log("aaaaaaaaaaaaaaaa before");
-                  //console.log(placeInLine);
-                  //console.log("aaaaaaaaaaaaaaaa");
-
                     while(placeInLine.indexOf(slot[i].deviceID)!==-1){placeInLine.splice(placeInLine.indexOf(slot[i].deviceID),1)} //clean out any and all entries in the queue of the offender
-
-                  //console.log("bbbbbbbbbbbbbbbb after");
-                  //console.log(placeInLine);
-                  //console.log("bbbbbbbbbbbbbbbb ");
-   
+  
                     emitCommandByDeviceID(devid, "disconnected", true, function(){
                         console.log("*******************************splicing", devid);
                         delete slot[i];
