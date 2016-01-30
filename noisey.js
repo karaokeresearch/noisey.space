@@ -71,7 +71,7 @@ client.on('connection', function(socket){
                        if (slot[i] && slot[i].deviceID===socket.deviceID){ //is this a slotted client?
                             //console.log("match", socket.deviceID, i);
                             data.slot=i;
-                            display.emit('clientUpdate', data);
+                            display.emit('clientDance', data);
   
                               if (data.danceScore >10 || data.buttonPushed===true){ //every time the user is not violating the rules, reset their lease
                                   slot[i].lastGoodDance=Date.now();
@@ -117,8 +117,8 @@ display.on('connection', function(socket){
 
 });
 
-var emitCommandByDeviceID = function(targetDeviceID,commandToSend,parameter){
-    if (targetDeviceID==="bab34b4c-7a81-4f17-942e-33a4733de963" && commandToSend==="assignSlot"){ console.log("trying to emit:",targetDeviceID,commandToSend,parameter)};
+var emitCommandByDeviceID = function(targetDeviceID,commandToSend,parameter, callback){
+    //if (targetDeviceID==="bab34b4c-7a81-4f17-942e-33a4733de963" && commandToSend==="assignSlot"){ console.log("trying to emit:",targetDeviceID,commandToSend,parameter)};
     for (var id in io.of('/client').connected) { //let's look at each connected client 
         var deviceID = io.of('/client').connected[id].deviceID;
         //console.log("looking at", deviceID);        
@@ -128,9 +128,22 @@ var emitCommandByDeviceID = function(targetDeviceID,commandToSend,parameter){
                                                            'parameter':parameter
                                                             });
             
+           
+            for (var i=0; i<3; i++){//look through the slot array and see if the entry is already there
+                if (slot[i] && slot[i].deviceID===deviceID){
+                                    display.emit('command', {'command':commandToSend,
+                                    'parameter':parameter,
+                                     'slot':i
+                                     });                                                            
+            
+                    
+                    };
+            }
+            
+            
         }
     }    
-   
+   typeof callback === 'function' && callback(); //this is how you do an optional callback because this language is weird
 }
 
 
@@ -209,11 +222,12 @@ setInterval(function(){  //queue that runs every second to check on user activit
                   //console.log(placeInLine);
                   //console.log("bbbbbbbbbbbbbbbb ");
    
+                    emitCommandByDeviceID(devid, "disconnected", true, function(){
+                        console.log("*******************************splicing", devid);
+                        delete slot[i];
+                        allocateSlots();
+                     });
       
-                    console.log("*******************************splicing", devid);
-                    delete slot[i];
-                    allocateSlots();
-                    emitCommandByDeviceID(devid, "disconnected", true);
                 } else{
                     var secondsLeft=(15-(Date.now() - slot[i].lastGoodDance)/1000).toFixed(0);
                     

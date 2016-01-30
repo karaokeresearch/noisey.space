@@ -346,7 +346,14 @@ if (fingersDown===0){
 
         });
 
-
+setInterval(function(){
+    if (document.hidden){//phone screensaver engages or tab switched? Stop thinking it's connected.
+		socket.emit('danceStatus', {
+            buttonPushed: false,
+            danceScore: 0
+        });
+	}
+},250);
 
 
 }); //end document ready
@@ -362,7 +369,7 @@ socket.on('command', function(data) { //incoming server instructions
             $("#slot").html('');
             activeColor="white";
             inactiveColor="grey"
-            sendDeviceID();
+            setTimeout(function(){sendDeviceID();},1000) //re-register, but give it a second.
             assignedSlot=-1;
             $("#theButton").css("background-image", 'url("button_'+ assignedSlot + '_up.png")');
             }

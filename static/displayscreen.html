@@ -152,7 +152,7 @@ visibility: hidden;
     width: 15vw;
     top:2.6vh;
     height: 62vh; 
-    color:black;
+    color:#FFFFFF;
     background-color:#444444;
 }
 
@@ -341,11 +341,10 @@ visibility: hidden;
 </html>
 
 <script>
-var debugMainScreen=false;  //change this to true if you need to work on the main title screen.
+var debugMainScreen=true;  //change this to true if you need to work on the main title screen.
 
 
 var socket = io('/display');
-var danceScore=0;
 var manifest;
 var vocals=[];
 var drums=[];
@@ -631,35 +630,7 @@ var play = function() {
     $("#progresscolor").css("width", ((vocals[0].pos()/vocals[0]._duration)*100) + "%");
     }, 1000);
     
-    setInterval(function(){ //instrument animations if at 100%
-        
-        for (var i=0; i<3; i++){
-            if (slot[i].danceScore>15 && slot[i].buttonPushed===true){
-            $("#noise" + (i+1) + "right").css("visibility", "visible");
-            $("#noise" + (i+1) + "left").css("visibility", "visible");
-            }
-            else{
-            $("#noise" + (i+1) + "right").css("visibility", "hidden");
-            $("#noise" + (i+1) + "left").css("visibility", "hidden");
-            }
-        }
-            
-        if (slot[0].danceScore>15 && slot[0].buttonPushed===true  &&  slot[1].danceScore>15 && slot[1].buttonPushed===true  &&  slot[2].danceScore>15 && slot[2].buttonPushed===true){
-
-            if (nsLogoBig===true){
-                $("#ns_sidebar").css("width", "80%");
-                nsLogoBig=false;
-            }else{
-                $("#ns_sidebar").css("width", "100%");
-                nsLogoBig=true;
-            }
-
-            
-        }            
-        
-    },250);
-
-    
+  
     
     
     
@@ -732,15 +703,80 @@ $( document ).ready(function() {
 
 
 
+    setInterval(function(){ //instrument animations if at 100%
+        for (var i=0; i<3; i++){
+            if (slot[i].danceScore>15 && slot[i].buttonPushed===true){
+            $("#noise" + (i+1) + "right").css("visibility", "visible");
+            $("#noise" + (i+1) + "left").css("visibility", "visible");
+            }
+            else{
+            $("#noise" + (i+1) + "right").css("visibility", "hidden");
+            $("#noise" + (i+1) + "left").css("visibility", "hidden");
+            }
+        }
+            
+        if (slot[0].danceScore>15 && slot[0].buttonPushed===true  &&  slot[1].danceScore>15 && slot[1].buttonPushed===true  &&  slot[2].danceScore>15 && slot[2].buttonPushed===true){
+
+            if (nsLogoBig===true){
+                $("#ns_sidebar").css("width", "80%");
+                nsLogoBig=false;
+            }else{
+                $("#ns_sidebar").css("width", "100%");
+                nsLogoBig=true;
+            }
+
+            
+        }            
+        
+    },250);
+
+
+
+
+
+
+
 
 }); //end document ready
 
-socket.on('clientUpdate', function(data) { //client dancability info
-	var gradient=0;
+
+
+
+socket.on('command', function(data) { //client dancability info
+console.log("command received", data);
+    if (data.command==="secondsLeft"){
+    $("#console"+(data.slot+1)).html("PUSH THE BUTTON!  " + data.parameter);
+        }
+    else if (data.command==="assignSlot"){
+        $( "#box"+(data.slot+1)).css("background-color", "#CCCCCC");
+        $( "#box"+(data.slot+1)).css("color", "#000000");
+        $( "#console"+(data.slot+1)).css("background-color", "#CCCCCC");
+        $( "#console"+(data.slot+1)).css("color", "#000000");
+
+        
+        
+    }
+    else if (data.command==="disconnected"){
+            $("#console"+(data.slot+1)).html("VISIT URL TO JOIN!");
+            $("#box"+(data.slot+1)).css("background-color", "#444444");
+            $("#box"+(data.slot+1)).css("color", "#FFFFFF");
+            $("#console"+(data.slot+1)).css("background-color", "#444444");
+            $("#console"+(data.slot+1)).css("color", "#FFFFFF");
+
+    }
+	
+	
+});
+
+
+
+socket.on('clientDance', function(data) { //client dancability info
 	var activeColor;
 	var inactiveColor;
-	//console.log(data);
 
+if (data.slot<3){
+    $( "#console"+(data.slot+1)).css("color", "#000000"); //inelegant. Display screen doesn't get info about current sessions during handshake.
+    $( "#box"+(data.slot+1)).css("color", "#000000");     //
 
     if (data.slot===0){
         activeColor="#FF5555";
@@ -759,28 +795,26 @@ socket.on('clientUpdate', function(data) { //client dancability info
     
     if (data.buttonPushed){
         
+        $( "#console"+(data.slot+1)).css("background-color", activeColor);
         $( "#box"+(data.slot+1)).css("background-color", activeColor);
     }else{
+        $( "#console"+(data.slot+1)).css("background-color", inactiveColor);
         $( "#box"+(data.slot+1)).css("background-color", inactiveColor);
     }
 
+      
 
-
-    if (data.danceScore<danceScore){ gradient=250}else{gradient=0}
-    
-    //console.log(data.slot);
-    if (data.slot<3){
-        if (data.buttonPushed){
-            setTrackVol(data.slot, data.danceScore/70)
-        }else{
-            setTrackVol(data.slot,0)            
-        }   
+    if (data.buttonPushed){
+        setTrackVol(data.slot, data.danceScore/70)
+    }else{
+        setTrackVol(data.slot,0)            
+    }   
      
      slot[data.slot].danceScore=data.danceScore;
      slot[data.slot].buttonPushed=data.buttonPushed;
     
         
-    }
+    
     
      
      var myScore = (data.danceScore * 1.5);
@@ -789,8 +823,8 @@ socket.on('clientUpdate', function(data) { //client dancability info
      $( "#bar" +data.slot).css("top",  100-myScore + "%");        
       
      
-     
-      danceScore =data.danceScore;
+  } 
+      
     
 	
 	
