@@ -419,6 +419,8 @@ socket.on('command', function(data) { //incoming server instructions
             assignedSlot=data.parameter;
             $("#theButtonUp").css("background-image", 'url("button_' + assignedSlot + '_up.png")');
             $("#theButtonDown").css("background-image", 'url("button_' + assignedSlot + '_down.png")');
+            $("#console").html("PUSH THE BUTTON!");
+            navigator.vibrate(100);
 
           //  console.log("buttonpushed",buttonPushed, "fingersdown", fingersDown);
           //  if (buttonPushed){
