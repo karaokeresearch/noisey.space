@@ -172,7 +172,7 @@ font-size:5vw
         xyzArray[1]=[];    
         xyzArray[2]=[];
         
-        
+        var safeToEmit=true;        
         var danceScore=0;
         var publishDate=0;
         var xyzMin=[];
@@ -348,11 +348,12 @@ if (fingersDown===0){
 
 setInterval(function(){
     if (document.hidden){//phone screensaver engages or tab switched? Stop thinking it's connected.
+		safeToEmit=false;
 		socket.emit('danceStatus', {
             buttonPushed: false,
             danceScore: 0
         });
-	}
+	}else{safeToEmit=true;}
 },250);
 
 
@@ -435,10 +436,11 @@ var stopStripe = function(){
 var sendDanceStatus = function(){
     
     if (assignedSlot!==-1){ //don't send unless you're slotted
-        socket.emit('danceStatus', {
-            buttonPushed: buttonPushed,
-            danceScore: Math.round(danceScore*100)/100, //two digit hack
-        });
+        if (safeToEmit){ socket.emit('danceStatus', {
+                buttonPushed: buttonPushed,
+                danceScore: Math.round(danceScore*100)/100, //two digit hack
+            });
+        }
     }
     if (assignedSlot!==-1){
         if (danceScore>10 && buttonPushed===true){$("#console").html("");}
@@ -450,7 +452,7 @@ var sendDanceStatus = function(){
 
 var sendDeviceID = function(){
     console.log("registering", deviceID);
-    if(deviceID){
+    if(deviceID && safeToEmit){
       socket.emit('register', {
                 deviceID: deviceID
       });

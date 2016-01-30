@@ -775,6 +775,12 @@ socket.on('clientDance', function(data) { //client dancability info
 	var inactiveColor;
 
 if (data.slot<3){
+ 
+     if (data.danceScore>10 && data.buttonPushed===false){$("#console"+(data.slot+1)).html("PUSH THE BUTTON!");}
+     if (data.danceScore<10 && data.buttonPushed===true){$("#console"+(data.slot+1)).html("NOW DANCE!");}
+
+    
+    
     $( "#console"+(data.slot+1)).css("color", "#000000"); //inelegant. Display screen doesn't get info about current sessions during handshake.
     $( "#box"+(data.slot+1)).css("color", "#000000");     //
 
