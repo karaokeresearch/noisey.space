@@ -153,7 +153,7 @@ visibility: hidden;
     top:2.6vh;
     height: 62vh; 
     color:#FFFFFF;
-    background-color:#444444;
+    background-color:#222222;
 }
 
 
@@ -195,7 +195,7 @@ visibility: hidden;
     width: 15vw;
     height: 5.3vh;
     top:73vh; 
-    background-color:#444444;
+    background-color:#222222;
 }
 
 
@@ -748,9 +748,9 @@ console.log("command received", data);
     $("#console"+(data.slot+1)).html("PUSH THE BUTTON!  " + data.parameter);
         }
     else if (data.command==="assignSlot"){
-        $( "#box"+(data.slot+1)).css("background-color", "#CCCCCC");
+        $( "#box"+(data.slot+1)).css("background-color", "#AAAAAA");
         $( "#box"+(data.slot+1)).css("color", "#000000");
-        $( "#console"+(data.slot+1)).css("background-color", "#CCCCCC");
+        $( "#console"+(data.slot+1)).css("background-color", "#AAAAAA");
         $( "#console"+(data.slot+1)).css("color", "#000000");
 
         
@@ -758,9 +758,9 @@ console.log("command received", data);
     }
     else if (data.command==="disconnected"){
             $("#console"+(data.slot+1)).html("VISIT URL TO JOIN!");
-            $("#box"+(data.slot+1)).css("background-color", "#444444");
+            $("#box"+(data.slot+1)).css("background-color", "#222222");
             $("#box"+(data.slot+1)).css("color", "#FFFFFF");
-            $("#console"+(data.slot+1)).css("background-color", "#444444");
+            $("#console"+(data.slot+1)).css("background-color", "#222222");
             $("#console"+(data.slot+1)).css("color", "#FFFFFF");
 
     }
@@ -778,7 +778,7 @@ if (data.slot<3){
  
      if (data.danceScore>10 && data.buttonPushed===false){$("#console"+(data.slot+1)).html("PUSH THE BUTTON!");}
      if (data.danceScore<10 && data.buttonPushed===true){$("#console"+(data.slot+1)).html("NOW DANCE!");}
-
+     if (data.danceScore>10 && data.buttonPushed===true){$("#console"+(data.slot+1)).html("KEEP DANCING!");}
     
     
     $( "#console"+(data.slot+1)).css("color", "#000000"); //inelegant. Display screen doesn't get info about current sessions during handshake.
@@ -786,17 +786,17 @@ if (data.slot<3){
 
     if (data.slot===0){
         activeColor="#FF5555";
-        inactiveColor='#CCCCCC';
+        inactiveColor='#AAAAAA';
     }
 
     if (data.slot===1){
         activeColor="#99FF99";
-        inactiveColor='#CCCCCC';
+        inactiveColor='#AAAAAA';
     }
     
     if (data.slot===2){
         activeColor="#588fff";
-        inactiveColor='#CCCCCC';
+        inactiveColor='#AAAAAA';
     }
     
     if (data.buttonPushed){

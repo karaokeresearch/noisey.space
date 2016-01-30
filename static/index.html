@@ -248,6 +248,7 @@ $('body').bind('touchstart', function(e){
     //downHappened++;
    //$("#slot").html(downHappened + " " + upHappened);
 if (fingersDown===1){
+    console.log("fingersdown equals one");
     buttonPushed=true;
     goStripes();
     $("#theButton").css("background-image", 'url("button_'+ assignedSlot + '_down.png")');
@@ -279,13 +280,11 @@ $('body').bind('touchend', function(e){
     stopStripe();
 
     fingersDown--;
-    //upHappened++;
-    //$("#slot").html(downHappened + " " + upHappened);
 if (fingersDown===0){    
     buttonPushed=false;
+    danceScore=0;
     $("#theButton").css("background-image", 'url("button_' + assignedSlot + '_up.png")');
     sendDanceStatus();    
-    //$("#thebutton").css("background-color", inactiveColor);
     navigator.vibrate(100);
 }
 })                                      
@@ -348,12 +347,28 @@ if (fingersDown===0){
 
 setInterval(function(){
     if (document.hidden){//phone screensaver engages or tab switched? Stop thinking it's connected.
-		safeToEmit=false;
-		socket.emit('danceStatus', {
-            buttonPushed: false,
-            danceScore: 0
-        });
-	}else{safeToEmit=true;}
+		
+		if (safeToEmit===true){
+    		console.log("phone locked.");
+    		socket.emit('danceStatus', {
+                buttonPushed: false,
+                danceScore: 0
+            });
+        }
+        safeToEmit=false;
+        
+        
+	}else{
+	    if (safeToEmit===false){
+            console.log("unlocking");
+            fingersDown=0;
+            buttonPushed=false;
+            $("#theButton").css("background-image", 'url("button_' + assignedSlot + '_up.png")');
+            navigator.vibrate(100);
+	        setTimeout(function(){sendDeviceID();},2000); //failsafe in case socket.io isn't up and running immediately upon phone restore
+	    }
+	safeToEmit=true;
+	}
 },250);
 
 
@@ -378,6 +393,7 @@ socket.on('command', function(data) { //incoming server instructions
           if (data.command==="assignSlot"){
             $("#slot").html( "PLAYER " + (data.parameter+1) );
             assignedSlot=data.parameter;
+            console.log("buttonpushed",buttonPushed, "fingersdown", fingersDown);
             if (buttonPushed){
                 $("#theButton").css("background-image", 'url("button_'+ assignedSlot + '_down.png")');
             }
@@ -451,8 +467,9 @@ var sendDanceStatus = function(){
 };
 
 var sendDeviceID = function(){
-    console.log("registering", deviceID);
+   
     if(deviceID && safeToEmit){
+      console.log("registering", deviceID);
       socket.emit('register', {
                 deviceID: deviceID
       });
