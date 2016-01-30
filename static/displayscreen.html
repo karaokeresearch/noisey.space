@@ -341,7 +341,7 @@ visibility: hidden;
 </html>
 
 <script>
-var debugMainScreen=false;  //change this to true if you need to work on the main title screen.
+var debugMainScreen=true;  //change this to true if you need to work on the main title screen.
 
 
 var socket = io('/display');
@@ -743,7 +743,7 @@ $( document ).ready(function() {
 
 
 socket.on('command', function(data) { //client dancability info
-console.log("command received", data);
+
     if (data.command==="secondsLeft"){
     $("#console"+(data.slot+1)).html("PUSH THE BUTTON!  " + data.parameter);
         }

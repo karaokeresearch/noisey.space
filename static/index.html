@@ -272,7 +272,7 @@ $('body').bind('touchstart', function(e){
     //downHappened++;
    //$("#slot").html(downHappened + " " + upHappened);
 if (fingersDown===1){
-    console.log("fingersdown equals one");
+    //console.log("fingersdown equals one");
     buttonPushed=true;
     goStripes();
     buttonDown();
@@ -306,7 +306,6 @@ $('body').bind('touchend', function(e){
     fingersDown--;
 if (fingersDown===0){    
     buttonPushed=false;
-    danceScore=0;
     buttonUp();
     sendDanceStatus();    
     navigator.vibrate(100);
@@ -480,7 +479,9 @@ var stopStripe = function(){
 var sendDanceStatus = function(){
     
     if (assignedSlot!==-1){ //don't send unless you're slotted
-        if (safeToEmit){ socket.emit('danceStatus', {
+        if (safeToEmit){ 
+            
+                socket.emit('danceStatus', {
                 buttonPushed: buttonPushed,
                 danceScore: Math.round(danceScore*100)/100, //two digit hack
             });
