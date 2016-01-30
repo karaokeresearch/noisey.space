@@ -1,6 +1,6 @@
 # NOISEY.SPACE
 noisey.space is a browser-based video game wherein up to 3 players control the volume of an individual track
-of a multi-track (stem) recording by dancing. Accelerometer data is passed from the cell phone, over socket.io to a node server which then relays the information to Displaysceen.html, which controls the entire thing and plays the multi-track stems. Be warned this application is very disk, and RAM-intensive, needing ~500MB-1.5GB of RAM, depending on the song. It works way better when the stems are hosted off an SSD.
+of a multi-track (stem) recording by dancing. Accelerometer data is passed from the cell phone, over socket.io to a node server which then relays the information to Displaysceen.html, which controls the entire thing and plays the multi-track stems. Be warned this application is very disk and RAM-intensive, needing ~500MB-1.5GB of RAM, depending on the song. It works way better when the stems are hosted off an SSD.
 
 Basics of how to use noisey.space:
 * Locate stems 
