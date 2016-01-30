@@ -6,24 +6,24 @@ Basics of how to use noisey.space:
 * Locate stems 
 * Arrange a directory so that each subdirectory is one song's worth of stem files
 
-       \
-       \The Cool Dudes - Ping Pongaz
-       \The Cool Dudes - Ping Pongaz\Bass.ogg
-       \The Cool Dudes - Ping Pongaz\Vocals.ogg
-       \The Cool Dudes - Ping Pongaz\Guitar.ogg
-       \The Cool Dudes - Ping Pongaz\Keys.ogg              
+        \
+        \The Cool Dudes - Ping Pongaz
+        \The Cool Dudes - Ping Pongaz\Bass.ogg
+        \The Cool Dudes - Ping Pongaz\Vocals.ogg
+        \The Cool Dudes - Ping Pongaz\Guitar.ogg
+        \The Cool Dudes - Ping Pongaz\Keys.ogg              
 
 * From that directory, run indexwebserver.js to generate a manifest of your songs
 
-       node findsongs.js > manifest.JSON
+        node findsongs.js > manifest.JSON
 
 * Host 'em, using CORS if necessary. I have used the node package http-server with great success using this execution string:
 
-       http-server --cors -p 8080 .
+        http-server --cors -p 8080 .
 
 * Run noisey.space
 
-       node noisey.js
+        node noisey.js
        
        
 * Connect a mobile browser to http://server/, and a desktop browser to http://server/displayscreen.html (or http://localhost/displayscreen.html)
