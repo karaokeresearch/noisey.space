@@ -12,6 +12,13 @@ Basics of how to use noisey.space:
         \The Cool Dudes - Ping Pongaz\Vocals.ogg
         \The Cool Dudes - Ping Pongaz\Guitar.ogg
         \The Cool Dudes - Ping Pongaz\Keys.ogg              
+        \God Bless Wisconsin - Gorilla Kiss
+        \God Bless Wisconsin - Gorilla Kiss\Vocals.ogg
+        \God Bless Wisconsin - Gorilla Kiss\Bass.ogg
+        \God Bless Wisconsin - Gorilla Kiss\Synth.ogg
+        \God Bless Wisconsin - Gorilla Kiss\Marimba.ogg
+        \God Bless Wisconsin - Gorilla Kiss\Theramin.ogg 
+        \manifest.JSON
 
 * From that directory, run indexwebserver.js to generate a manifest of your songs
 
