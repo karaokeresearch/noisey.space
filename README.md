@@ -23,6 +23,7 @@ Basics of how to use noisey.space:
 
 * Run noisey.space
 
+        npm install
         node noisey.js
        
        
