@@ -382,7 +382,16 @@ var loadRandomSong= function(){
 
  
  var iType;
- var s=Math.floor(Math.random() * manifest.length);
+ 
+ 
+ var storedSong=localStorage.getItem('storedSong');                         //play the songs one at a time by manifest order
+ if (storedSong===null){storedSong=-1}else{storedSong=Number(storedSong);}
+ if (isNaN(storedSong)){storedSong=-1}
+ var s= storedSong+1;
+ if (s > manifest.length-1){s=0;}
+ localStorage.setItem('storedSong', s);
+
+ //var s=Math.floor(Math.random() * manifest.length);
 
  
  
