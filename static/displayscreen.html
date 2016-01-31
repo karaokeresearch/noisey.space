@@ -293,13 +293,13 @@ visibility: hidden;
     
     <div id="songtitle">&nbsp;</div>
     
-    <div id="sidebar"><img id="ns_sidebar" src="ns_condensed.png" style="width:100%">
+    <div id="sidebar"><div id="logo_backdrop" style="background-color: #ff5555; margin:0px;"><img id="ns_sidebar" src="ns_condensed_transparent.png" style="width:100%"></div>
      <div style="position:absolute; top:30vh; width:100%; margin-top:1em; color:grey">Connect to:
          <div style="width:100%; margin-top:2em"><span style="font-size:2.3em">NS.BOX.BZ</span></div>
          <div style="width:100%; margin-top:0.75em; color:grey">or</div>
-         <div style="width:100%; margin-top:0.75em; color:white">http://nois<span style="color:#FF5555">e</span>y.space</div>
+         <div style="width:100%; margin-top:0.75em; color:white">http://nois<span id="thee" style="color:#FF5555">e</span>y.space</div>
          <div style="width:100%; margin-top:2em; color:grey">...on your mobile browser to play.</div>
-         <div style="width:100%; margin-top:3em"><span style="font-size:1.5em; color:#FF5555">PUSH THE BUTTON AND DANCE!</span></div>
+         <div style="width:100%; margin-top:3em"><span id="biginstructions" style="font-size:1.5em; color:#FF5555">PUSH THE BUTTON AND DANCE!</span></div>
      </div>
     </div>
 
@@ -361,7 +361,7 @@ var titleLoop;
 var startVol=0;
 var maxVol=0.75;
 var currentSong;
-var nsLogoBig; //animation in case you achieve noisey.space
+var nsLogoColor; //animation in case you achieve noisey.space
 
 var slot=[];
 slot[0]={};
@@ -641,13 +641,20 @@ var play = function() {
     setInterval(function(){ //start the progress bar moving.
     $("#progresscolor").css("width", ((vocals[0].pos()/vocals[0]._duration)*100) + "%");
     }, 1000);
-    
-  
-    
-    
-    
 
 };
+
+
+
+var wildColors=function(){
+            $("#logo_backdrop").css('background-color', '#' + Math.random().toString(16).substring(2, 8));
+            $("#biginstructions").css('color', '#' + Math.random().toString(16).substring(2, 8));            
+            $("#thee").css('color', '#' + Math.random().toString(16).substring(2, 8));            
+            $("#progresscolor").css('background-color', '#' + Math.random().toString(16).substring(2, 8));
+            
+}
+
+
 
 
 
@@ -726,18 +733,9 @@ $( document ).ready(function() {
             $("#noise" + (i+1) + "left").css("visibility", "hidden");
             }
         }
-            
-        if (slot[0].danceScore>15 && slot[0].buttonPushed===true  &&  slot[1].danceScore>15 && slot[1].buttonPushed===true  &&  slot[2].danceScore>15 && slot[2].buttonPushed===true){
 
-            if (nsLogoBig===true){
-                $("#ns_sidebar").css("width", "80%");
-                nsLogoBig=false;
-            }else{
-                $("#ns_sidebar").css("width", "100%");
-                nsLogoBig=true;
-            }
-
-            
+        if (slot[0].danceScore>15 && slot[0].buttonPushed===true  &&  slot[1].danceScore>15 && slot[1].buttonPushed===true  &&  slot[2].danceScore>15 && slot[2].buttonPushed===true){ //noisey.space rotate
+           wildColors()            
         }            
         
     },250);
