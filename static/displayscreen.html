@@ -344,8 +344,10 @@ visibility: hidden;
 </html>
 
 <script>
+//Change these three variables depending on if you're debugging it and where you want your various audio assets to sit
 var debugMainScreen=false;  //change this to true if you need to work on the main title screen.
-
+var oggHTTPserver='http://localhost:8080/';
+var soundAssetsServer= '' //change to oggHTTPserver to server all your audio assets from the stems server to save bandwidth. Must copy BitQuestLoop.ogg and ding.ogg to root dir of stems http. Actually, don't do this yet. The indexer can't handle it.
 
 var socket = io('/display');
 var manifest;
@@ -353,7 +355,6 @@ var vocals=[];
 var drums=[];
 var bass=[];
 var sink=[];
-var oggHTTPserver='http://localhost:8080/';
 var foundVocal=false;
 var foundSong=false;
 var titleLoop;
@@ -672,10 +673,9 @@ $( document ).ready(function() {
         // `data` contains parsed JSON
         manifest=data.children;
         console.log(manifest.length + " songs available");
-        
         setTimeout(function(){
             titleLoop = new Howl({
-                urls: ['BitQuestLoop.ogg'],
+                urls: [soundAssetsServer +'BitQuestLoop.ogg'],
                 autoplay: true,
                 loop: true,
                 volume: (debugMainScreen ? 0 : maxVol)
@@ -704,7 +704,7 @@ $( document ).ready(function() {
         setTimeout(function(){loadRandomSong();},debugMainScreen ? 500 : 18000) //enough time to allow memory to be reclaimed?
 
         ding = new Howl({
-            urls: ['ding.ogg'],
+            urls: [soundAssetsServer + 'ding.ogg'],
             autoplay: true,
             loop: false,
             volume: maxVol
