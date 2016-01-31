@@ -433,6 +433,8 @@ socket.on('command', function(data) { //incoming server instructions
             }
 
           if (data.command==="secondsLeft"){
+            
+            if (data.parameter<6){navigator.vibrate(200);}
             if (buttonPushed){
                 $("#console").html("NOW DANCE!  " + data.parameter);
             }

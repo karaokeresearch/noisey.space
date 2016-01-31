@@ -461,7 +461,7 @@ var vocalsLoaded=false;
                           urls: [trackToLoad],
                           autoplay: false,
                           loop: false,
-                          volume: maxVol,
+                          volume: maxVol * 0.75,
                           onload: function() {
                             loadSongTracks(s,t+1);
                           },
@@ -475,7 +475,7 @@ var vocalsLoaded=false;
                           urls: [trackToLoad],
                           autoplay: false,
                           loop: false,
-                          volume: maxVol,
+                          volume: maxVol *0.75,
                           onload: function() {
                             loadSongTracks(s,t+1);
                           }
@@ -507,7 +507,7 @@ var vocalsLoaded=false;
                           urls: [trackToLoad],
                           autoplay: false,
                           loop: false,
-                          volume: maxVol,
+                          volume: maxVol * 0.75,
                           onload: function() {
                             loadSongTracks(s,t+1);
                           },
@@ -521,7 +521,7 @@ var vocalsLoaded=false;
                           urls: [trackToLoad],
                           autoplay: false,
                           loop: false,
-                          volume: maxVol,
+                          volume: maxVol *0.75,
                           onload: function() {
                             loadSongTracks(s,t+1);
                           }
@@ -592,19 +592,19 @@ var setTrackVol = function(instrument,vol){
     if (instrument===0){
         drums.forEach(function(whichTrack){
            //console.log(whichTrack);
-           whichTrack.volume(vol);
+           whichTrack.volume(vol * maxVol);
         });
     }
     
     if (instrument===1){
         bass.forEach(function(whichTrack){
-           whichTrack.volume(vol);
+           whichTrack.volume(vol * maxVol);
         });
     }
     
     if (instrument===2){
         sink.forEach(function(whichTrack){
-           whichTrack.volume(vol);
+           whichTrack.volume(vol * maxVol);
         });
     }
     
