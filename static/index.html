@@ -294,7 +294,7 @@ if (fingersDown===1){
         },1); //you've got to be kidding me. This fixes Firefox orientation lock #oratleastitusedto #haxx #findabetterway
         console.log ("fullscreening and attempting to lock orientation")
    }
- navigator.vibrate(100);
+        if (typeof(navigator.vibrate) != "undefined"){navigator.vibrate(100);}
 }
  
  
@@ -308,7 +308,7 @@ if (fingersDown===0){
     buttonPushed=false;
     buttonUp();
     sendDanceStatus();    
-    navigator.vibrate(100);
+    if (typeof(navigator.vibrate) != "undefined"){navigator.vibrate(100);}
 }
 })                                      
 
@@ -387,7 +387,7 @@ setInterval(function(){
             fingersDown=0;
             buttonPushed=false;
             buttonUp();
-            navigator.vibrate(100);
+            if (typeof(navigator.vibrate) != "undefined"){navigator.vibrate(100);}
 	        setTimeout(function(){sendDeviceID();},2000); //failsafe in case socket.io isn't up and running immediately upon phone restore
 	    }
 	safeToEmit=true;
@@ -420,7 +420,7 @@ socket.on('command', function(data) { //incoming server instructions
             $("#theButtonUp").css("background-image", 'url("button_' + assignedSlot + '_up.png")');
             $("#theButtonDown").css("background-image", 'url("button_' + assignedSlot + '_down.png")');
             $("#console").html("PUSH THE BUTTON!");
-            navigator.vibrate(100);
+            if (typeof(navigator.vibrate) != "undefined"){navigator.vibrate(100);}
 
           //  console.log("buttonpushed",buttonPushed, "fingersdown", fingersDown);
           //  if (buttonPushed){
@@ -434,7 +434,7 @@ socket.on('command', function(data) { //incoming server instructions
 
           if (data.command==="secondsLeft"){
             
-            if (data.parameter<6){navigator.vibrate(200);}
+            if (data.parameter<6){if (typeof(navigator.vibrate) != "undefined"){navigator.vibrate(200);}}
             if (buttonPushed){
                 $("#console").html("NOW DANCE!  " + data.parameter);
             }
