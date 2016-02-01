@@ -419,7 +419,7 @@ socket.on('command', function(data) { //incoming server instructions
             assignedSlot=data.parameter;
             $("#theButtonUp").css("background-image", 'url("button_' + assignedSlot + '_up.png")');
             $("#theButtonDown").css("background-image", 'url("button_' + assignedSlot + '_down.png")');
-            $("#console").html("PUSH THE BUTTON!");
+            $("#console").html("HOLD DOWN THE BUTTON!");
             if (typeof(navigator.vibrate) != "undefined"){navigator.vibrate(100);}
 
           //  console.log("buttonpushed",buttonPushed, "fingersdown", fingersDown);
@@ -439,7 +439,7 @@ socket.on('command', function(data) { //incoming server instructions
                 $("#console").html("NOW DANCE!  " + data.parameter);
             }
             else{
-                $("#console").html("PUSH THE BUTTON!  " + data.parameter);
+                $("#console").html("HOLD DOWN THE BUTTON!  " + data.parameter);
             }
             //$("#console").html("START DANCING OR HOLD THE BUTTON!<BR>HURRY! " + data.parameter + " SECONDS LEFT!");
             //if (data.parameter<=10){ navigator.vibrate(100); }
@@ -498,7 +498,7 @@ var sendDanceStatus = function(){
     }
     if (assignedSlot!==-1){
         if (danceScore>10 && buttonPushed===true){$("#console").html("");}
-        //if (danceScore>10 && buttonPushed===false){$("#console").html("PUSH THE BUTTON!");}
+        //if (danceScore>10 && buttonPushed===false){$("#console").html("HOLD DOWN THE BUTTON!");}
         //if (danceScore<10 && buttonPushed===true){$("#console").html("NOW DANCE!");}
     }    
     

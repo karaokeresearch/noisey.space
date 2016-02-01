@@ -194,11 +194,12 @@ visibility: hidden;
     text-align:center; 
     border-radius: 2em;
     border: 0.2em solid #FFFFFF;
-    padding: 0.8em; 
-    width: 15vw;
-    height: 5.3vh;
-    top:73vh; 
+    padding: 0.5em; 
+    width: 16vw;
+    height: 9vh;
+    top:72vh; 
     background-color:#222222;
+    font-size:1em
 }
 
 
@@ -299,7 +300,7 @@ visibility: hidden;
          <div style="width:100%; margin-top:0.75em; color:grey">or</div>
          <div style="width:100%; margin-top:0.75em; color:white">http://nois<span id="thee" style="color:#FF5555">e</span>y.space</div>
          <div style="width:100%; margin-top:2em; color:grey">...on your mobile browser to play.</div>
-         <div style="width:100%; margin-top:3em"><span id="biginstructions" style="font-size:1.5em; color:#FF5555">PUSH THE BUTTON AND DANCE!</span></div>
+         <div style="width:100%; margin-top:3em"><span id="biginstructions" style="font-size:1em; color:#FF5555">PRESS & HOLD THE BUTTON TO ACTIVATE.<BR><br>DANCE TO MAKE NOISE!</span></div>
      </div>
     </div>
 
@@ -345,7 +346,7 @@ visibility: hidden;
 
 <script>
 //Change these three variables depending on if you're debugging it and where you want your various audio assets to sit
-var debugMainScreen=false;  //change this to true if you need to work on the main title screen.
+var debugMainScreen=true;  //change this to true if you need to work on the main title screen.
 var oggHTTPserver='http://localhost:8080/';
 var soundAssetsServer= '' //change to oggHTTPserver to server all your audio assets from the stems server to save bandwidth. Must copy BitQuestLoop.ogg and ding.ogg to root dir of stems http. Actually, don't do this yet. The indexer can't handle it.
 
@@ -758,7 +759,7 @@ socket.on('command', function(data) { //client dancability info
         if (slot[data.slot].buttonPushed){
           $("#console"+(data.slot+1)).html("NOW DANCE!  " + data.parameter);
         }else{
-          $("#console"+(data.slot+1)).html("PUSH THE BUTTON!  " + data.parameter);
+          $("#console"+(data.slot+1)).html("HOLD DOWN THE BUTTON!  " + data.parameter);
         }
     }
     else if (data.command==="assignSlot"){
