@@ -67,7 +67,7 @@ visibility: hidden;
 
 #titleinstructions{
     position:absolute;
-    bottom:5vh;
+    bottom:2vh;
     left:10vw;
     width:80vw;
     border:0px;
@@ -88,6 +88,24 @@ visibility: hidden;
     text-align: center;
 
     }
+
+
+
+#howtoplay{    
+    position:absolute;
+    left:0px;
+    top:0px;
+    border:0px;
+    padding:0px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center; 
+    display: none;
+    width:  100%;
+    height: 100%;
+    background-image: url(HowToPlayAnimated.gif);
+}
+
 
 
 
@@ -218,6 +236,14 @@ visibility: hidden;
 
 
 
+#loadupdates{
+    font-size:0.75em;
+    position: fixed;
+    bottom:2vw;
+    right:2vw; 
+    text-align:center; 
+}    
+
 
 
  
@@ -237,9 +263,7 @@ visibility: hidden;
 
 <div id="titleinstructions">
     <span style="color:grey;">connect to</span><br><br><br><span style="font-size:2vw">HTTP://NS.MOD.BZ </span><br><br><span style="color:grey;"><br>on your mobile browser to play. <br><br></span>
-    <div id="loadupdates">&nbsp;</div>
 </div>
-
 
 <div id="story">    
     
@@ -248,11 +272,16 @@ visibility: hidden;
     <div style="margin-top:2em">The band wants to play, but nobody's dancing!</div>
     <br>
     Can you help them?
-    <br><br><br>
+    <br>
     <img src="theband.png">
     <br>
 
 </div>
+
+
+<div id="howtoplay"></div>
+<div id="loadupdates">&nbsp;</div>
+
 
 
 <div id="thegame">
@@ -569,9 +598,10 @@ var vocalsLoaded=false;
     console.log("All Tracks loaded. Playing."); //begin the game!
     
     setTimeout(function(){
-        $("#story").css("display", "none");
+        $("#howtoplay").css("display", "none");
         $("#thegame").css("display", "inline");
         $("#titleinstructions").css("display", "none");
+        $("#loadupdates").css("display", "none");
         $("#story").css("display", "none");
     },debugMainScreen ? 0 : 2500);
     $("#songtitle").html("PLAYING: <span style=\"color:yellow\">" + currentSong + "</span>" );
@@ -695,14 +725,25 @@ $( document ).ready(function() {
         $("#titlescreen").css("display", "none");
         $("#forkme").css("display", "none");
         
-            },debugMainScreen ? 500 : 9500) //disappear title screen
+            },debugMainScreen ? 500 : 7000) //disappear title screen
 
         setTimeout(function(){
         $("#story").css("display", "inline");        
-            },debugMainScreen ? 500 : 10500) //appear story screen 1 sec later
+            },debugMainScreen ? 500 : 7500) //appear story screen 1 sec later
             
+        setTimeout(function(){
+        $("#story").css("display", "none");        
+        $("#titleinstructions").css("display", "none");
+            },debugMainScreen ? 500 : 11750) //disappear story screen
+
+        setTimeout(function(){
+        $("#howtoplay").css("display", "block");
+            },debugMainScreen ? 500 : 12250) //disappear story screen
+
+
+
             
-        setTimeout(function(){loadRandomSong();},debugMainScreen ? 500 : 18000) //enough time to allow memory to be reclaimed?
+        setTimeout(function(){loadRandomSong();},debugMainScreen ? 500 : 20000) //enough time to allow memory to be reclaimed?
 
         ding = new Howl({
             urls: [soundAssetsServer + 'ding.ogg'],
@@ -777,6 +818,9 @@ socket.on('command', function(data) { //client dancability info
             $("#box"+(data.slot+1)).css("color", "#FFFFFF");
             $("#console"+(data.slot+1)).css("background-color", "#222222");
             $("#console"+(data.slot+1)).css("color", "#FFFFFF");
+            $( "#bar" +data.slot).css("height",  "0%");
+            $( "#bar" +data.slot).css("top",  "100%");        
+
 
     }
 	
