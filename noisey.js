@@ -165,7 +165,7 @@ var allocateSlots = function(){
   //  console.log("id:" + id);
     //var deviceID = io.of('/client').connected[id].deviceID;
  for (w in placeInLine){
-    deviceID=placeInLine[w];
+    var deviceID=placeInLine[w];
     //console.log("we found ", deviceID);
     var alreadyAdded=false;
     
