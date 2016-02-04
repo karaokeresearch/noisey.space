@@ -103,7 +103,7 @@ visibility: hidden;
     display: none;
     width:  100%;
     height: 100%;
-    background-image: url(HowToPlayAnimated.gif);
+    
 }
 
 
@@ -738,6 +738,8 @@ $( document ).ready(function() {
 
         setTimeout(function(){
         $("#howtoplay").css("display", "block");
+        $("#howtoplay").css("background-image", 'url("HowToPlayAnimated.gif")');
+
             },debugMainScreen ? 500 : 12250) //disappear story screen
 
 
