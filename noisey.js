@@ -98,7 +98,7 @@ client.on('connection', function(socket){
                   //console.log(placeInLine);
                   //console.log("cccccccccccccccc");
 
-      allocateSlots();
+      allocateSlots(data.deviceID);
          
                
    });
@@ -148,7 +148,7 @@ var emitCommandByDeviceID = function(targetDeviceID,commandToSend,parameter, cal
 
 
 
-var allocateSlots = function(){
+var allocateSlots = function(deviceIDtoRegister){
 //    for (dID in placeInLine) { //let's look at each client on the list. These are device IDs
 //        for (var sid in io.of('/client').connected) { //session IDs 
 //            var deviceID = io.of('/client').connected[sid].deviceID;
@@ -169,10 +169,12 @@ var allocateSlots = function(){
     //console.log("we found ", deviceID);
     var alreadyAdded=false;
     
-    for (var i=0; i<3; i++){//look through the slot array and see if the entry is already there
+    for (var i=0; i<3; i++){//look through the slot array and see if the entry is already there - for when the player accidentally disconnects and rejoins
         if (slot[i] && slot[i].deviceID===deviceID){
             alreadyAdded=true;
-            emitCommandByDeviceID(deviceID, "assignSlot", i);
+            if (deviceID===deviceIDtoRegister){
+                emitCommandByDeviceID(deviceID, "assignSlot", i);
+                }
             };
     }
     
